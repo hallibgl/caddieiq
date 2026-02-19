@@ -288,59 +288,51 @@
   /* ── PLAIN ENGLISH CARD ─────────────────── */
   .plain-english-card {
     background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
-    border-radius: 14px;
-    padding: 1.5rem 1.75rem;
-    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 1.25rem;
     color: white;
     display: none;
     animation: fadeIn 0.4s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .plain-english-card::after {
-    content: '🏌️';
-    position: absolute;
-    right: 1.5rem; top: 50%;
-    transform: translateY(-50%);
-    font-size: 3rem;
-    opacity: 0.1;
   }
   .pe-label {
     font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
+    font-size: 0.62rem;
     letter-spacing: 2px;
     color: var(--gold-light);
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
   }
-  .pe-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
+  .pe-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
   }
-  @media (max-width: 700px) { .pe-grid { grid-template-columns: 1fr; } }
-  .pe-item { padding: 0; }
-  .pe-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
+  .pe-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.83rem;
+    line-height: 1.4;
+    color: rgba(255,255,255,0.9);
+  }
+  .pe-icon {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
   .pe-item-label {
     font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    margin-bottom: 0.4rem;
+    flex-shrink: 0;
+    min-width: 52px;
   }
-  .pe-item-label.problem { color: #ff8080; }
+  .pe-item-label.problem { color: #ff9090; }
   .pe-item-label.fix { color: var(--gold-light); }
   .pe-item-label.watch { color: var(--green-light); }
-  .pe-item-text {
-    font-size: 0.88rem;
-    line-height: 1.55;
-    color: rgba(255,255,255,0.88);
-  }
-  .pe-divider {
-    width: 1px;
-    background: rgba(255,255,255,0.15);
-  }
-  @media (max-width: 700px) { .pe-divider { display: none; } }
+  .pe-item-text { color: rgba(255,255,255,0.88); }
 
   /* ── WORK ON TODAY BUTTON ───────────────── */
   .wot-card {
@@ -778,6 +770,169 @@
   .analysis-collapsible { display: none; margin-top: 0.5rem; }
   .analysis-collapsible.open { display: block; }
 
+
+  /* ── PATH SPECTRUM SLIDER ───────────────── */
+  .path-spectrum-wrap { margin: 1rem 0; }
+
+  .path-spectrum-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  .path-spec-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .path-spec-label.left { color: var(--danger); text-align: left; }
+  .path-spec-label.center { color: var(--green); text-align: center; }
+  .path-spec-label.right { color: var(--green); text-align: right; }
+
+  .path-spectrum-track {
+    position: relative;
+    height: 28px;
+    background: linear-gradient(to right, #e63946 0%, #f4a261 25%, #d8f3dc 40%, #52b788 50%, #d8f3dc 60%, #f4a261 75%, #e63946 100%);
+    border-radius: 14px;
+    margin-bottom: 1.25rem;
+  }
+
+  .path-target-zone {
+    position: absolute;
+    top: 0; bottom: 0;
+    background: rgba(255,255,255,0.35);
+    border-radius: 14px;
+    border: 2px solid rgba(82,183,136,0.8);
+    transition: all 0.5s ease;
+  }
+
+  .path-marker {
+    position: absolute;
+    top: -6px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 2;
+  }
+  .path-marker-line {
+    width: 4px;
+    height: 40px;
+    background: var(--fairway);
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .path-marker-label {
+    background: var(--fairway);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    margin-top: 3px;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+
+  .path-tick {
+    position: absolute;
+    bottom: -20px;
+    transform: translateX(-50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+  .path-tick.center-tick { color: var(--green); font-weight: 700; }
+
+  .path-meaning-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  .path-meaning-box {
+    flex: 1;
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+  }
+  .path-meaning-box.target {
+    background: var(--green-pale);
+    border-color: var(--green-light);
+  }
+  .path-meaning-arrow {
+    font-size: 1.2rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .pmb-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+  .pmb-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--fairway);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .pmb-desc { font-size: 0.78rem; color: var(--mid); line-height: 1.4; }
+
+  /* ── REALISTIC GRIP CARDS ───────────────── */
+  .grip-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 600px) { .grip-cards { grid-template-columns: 1fr; } }
+
+  .grip-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.2s;
+    opacity: 0.55;
+  }
+  .grip-card.highlighted {
+    border-color: var(--green);
+    opacity: 1;
+    box-shadow: 0 4px 16px rgba(45,106,79,0.15);
+  }
+  .grip-card-name {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    color: var(--fairway);
+    margin-bottom: 0.2rem;
+  }
+  .grip-card-desc {
+    font-size: 0.73rem;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+  }
+  .grip-card.highlighted .grip-card-desc { color: var(--mid); }
+  .grip-recommended {
+    display: none;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-top: 0.4rem;
+  }
+  .grip-card.highlighted .grip-recommended { display: block; }
+
 </style>
 </head>
 <body>
@@ -982,24 +1137,22 @@
 
       <!-- PLAIN ENGLISH CARD -->
       <div id="pe-card-upload" class="plain-english-card">
-        <div class="pe-label">⚡ Plain English Summary</div>
-        <div class="pe-grid">
+        <div class="pe-label">⚡ Quick Take</div>
+        <div class="pe-row">
           <div class="pe-item">
-            <div class="pe-icon">🔴</div>
-            <div class="pe-item-label problem">The Problem</div>
-            <div class="pe-item-text" id="pe-problem-upload">—</div>
+            <span class="pe-icon">🔴</span>
+            <span class="pe-item-label problem">Problem</span>
+            <span class="pe-item-text" id="pe-problem-upload">—</span>
           </div>
-          <div class="pe-divider"></div>
           <div class="pe-item">
-            <div class="pe-icon">🎯</div>
-            <div class="pe-item-label fix">The Fix</div>
-            <div class="pe-item-text" id="pe-fix-upload">—</div>
+            <span class="pe-icon">🎯</span>
+            <span class="pe-item-label fix">Fix</span>
+            <span class="pe-item-text" id="pe-fix-upload">—</span>
           </div>
-          <div class="pe-divider"></div>
           <div class="pe-item">
-            <div class="pe-icon">👀</div>
-            <div class="pe-item-label watch">Watch This Number</div>
-            <div class="pe-item-text" id="pe-watch-upload">—</div>
+            <span class="pe-icon">👀</span>
+            <span class="pe-item-label watch">Watch</span>
+            <span class="pe-item-text" id="pe-watch-upload">—</span>
           </div>
         </div>
       </div>
@@ -1010,37 +1163,46 @@
         <div class="vd-section-label">📊 Your Numbers vs Target</div>
         <div class="gauge-grid" id="gauge-grid"></div>
 
-        <div class="vd-section-label">🏹 Club Path Diagram</div>
+        <div class="vd-section-label">🏹 Club Path</div>
         <div class="path-diagram-card">
-          <div class="path-diagram-title">Swing Direction — Top View</div>
-          <div class="path-diagram-wrap">
-            <div class="path-svg-wrap">
-              <svg id="path-svg" width="160" height="160" viewBox="0 0 160 160">
-                <!-- Target line -->
-                <line x1="80" y1="10" x2="80" y2="150" stroke="#e8e4da" stroke-width="1.5" stroke-dasharray="5,3"/>
-                <text x="83" y="14" fill="#9090aa" font-size="9" font-family="DM Mono">TARGET</text>
-                <!-- Ideal path zone -->
-                <path id="ideal-zone" d="" fill="rgba(82,183,136,0.1)" />
-                <!-- Ideal path arrow -->
-                <line id="ideal-arrow-line" x1="80" y1="140" x2="80" y2="30" stroke="#52b788" stroke-width="2" stroke-dasharray="4,3"/>
-                <polygon id="ideal-arrow-head" points="80,20 75,35 85,35" fill="#52b788"/>
-                <!-- Actual path arrow -->
-                <line id="actual-arrow-line" x1="80" y1="140" x2="80" y2="30" stroke="#1b4332" stroke-width="3"/>
-                <polygon id="actual-arrow-head" points="80,20 74,36 86,36" fill="#1b4332"/>
-                <!-- Center dot -->
-                <circle cx="80" cy="140" r="5" fill="#1b4332"/>
-              </svg>
+          <div class="path-diagram-title">Swing Direction — Out-to-In ← Neutral → In-to-Out</div>
+
+          <!-- Spectrum slider -->
+          <div class="path-spectrum-wrap">
+            <div class="path-spectrum-labels">
+              <span class="path-spec-label left">OUT-TO-IN<br><span style="font-weight:400;color:var(--danger)">Fade / Slice</span></span>
+              <span class="path-spec-label center">NEUTRAL<br><span style="font-weight:400;color:var(--green)">0°</span></span>
+              <span class="path-spec-label right">IN-TO-OUT<br><span style="font-weight:400;color:var(--green)">Draw</span></span>
             </div>
-            <div class="path-legend">
-              <div class="path-legend-item">
-                <div class="path-legend-dot" style="background:#1b4332"></div>
-                <div><strong>Your Path:</strong> <span id="path-actual-label">—</span></div>
+            <div class="path-spectrum-track" id="path-spectrum-track">
+              <!-- Green target zone injected by JS -->
+              <div class="path-target-zone" id="path-target-zone"></div>
+              <!-- Marker -->
+              <div class="path-marker" id="path-marker">
+                <div class="path-marker-line"></div>
+                <div class="path-marker-label" id="path-marker-label">0°</div>
               </div>
-              <div class="path-legend-item">
-                <div class="path-legend-dot" style="background:#52b788"></div>
-                <div><strong>Ideal Target:</strong> <span id="path-ideal-label">0° to +3°</span></div>
-              </div>
-              <div style="margin-top:0.75rem; font-size:0.8rem; color:var(--muted); line-height:1.5;" id="path-explanation"></div>
+              <!-- Scale ticks -->
+              <div class="path-tick" style="left:0%"><span>-10°</span></div>
+              <div class="path-tick" style="left:25%"><span>-5°</span></div>
+              <div class="path-tick center-tick" style="left:50%"><span>0°</span></div>
+              <div class="path-tick" style="left:75%"><span>+5°</span></div>
+              <div class="path-tick" style="left:100%"><span>+10°</span></div>
+            </div>
+          </div>
+
+          <!-- What it means -->
+          <div class="path-meaning-row">
+            <div class="path-meaning-box" id="path-meaning-current">
+              <div class="pmb-label">YOUR PATH</div>
+              <div class="pmb-value" id="path-value-display">—</div>
+              <div class="pmb-desc" id="path-desc-display">—</div>
+            </div>
+            <div class="path-meaning-arrow">→</div>
+            <div class="path-meaning-box target">
+              <div class="pmb-label">TARGET</div>
+              <div class="pmb-value" id="path-target-display">—</div>
+              <div class="pmb-desc" id="path-target-desc">—</div>
             </div>
           </div>
         </div>
@@ -1150,24 +1312,22 @@
 
           <!-- PLAIN ENGLISH CARD - SHOT ANALYZER -->
           <div id="pe-card-shot" class="plain-english-card">
-            <div class="pe-label">⚡ Plain English Summary</div>
-            <div class="pe-grid">
+            <div class="pe-label">⚡ Quick Take</div>
+            <div class="pe-row">
               <div class="pe-item">
-                <div class="pe-icon">🔴</div>
-                <div class="pe-item-label problem">The Problem</div>
-                <div class="pe-item-text" id="pe-problem-shot">—</div>
+                <span class="pe-icon">🔴</span>
+                <span class="pe-item-label problem">Problem</span>
+                <span class="pe-item-text" id="pe-problem-shot">—</span>
               </div>
-              <div class="pe-divider"></div>
               <div class="pe-item">
-                <div class="pe-icon">🎯</div>
-                <div class="pe-item-label fix">The Fix</div>
-                <div class="pe-item-text" id="pe-fix-shot">—</div>
+                <span class="pe-icon">🎯</span>
+                <span class="pe-item-label fix">Fix</span>
+                <span class="pe-item-text" id="pe-fix-shot">—</span>
               </div>
-              <div class="pe-divider"></div>
               <div class="pe-item">
-                <div class="pe-icon">👀</div>
-                <div class="pe-item-label watch">Watch This Number</div>
-                <div class="pe-item-text" id="pe-watch-shot">—</div>
+                <span class="pe-icon">👀</span>
+                <span class="pe-item-label watch">Watch</span>
+                <span class="pe-item-text" id="pe-watch-shot">—</span>
               </div>
             </div>
           </div>
@@ -2428,52 +2588,54 @@ function buildGauges(metrics, handicap, goal) {
   });
 }
 
-// ── PATH DIAGRAM BUILDER ──────────────────────────────────────────────────────
+// ── PATH SPECTRUM SLIDER ──────────────────────────────────────────────────────
 function buildPathDiagram(clubPath, goal) {
   if (clubPath === null) return;
 
   const isDrawGoal = goal === 'draw';
-  const idealAngle = isDrawGoal ? 2 : -2; // degrees
-  const actualAngle = parseFloat(clubPath.toFixed(1));
+  const val = parseFloat(clubPath.toFixed(1));
 
-  // Convert angle to SVG coords (positive = right of target = in-to-out)
-  function angleToCoords(degrees, length) {
-    const rad = (degrees * Math.PI) / 180;
-    return {
-      x: 80 + Math.sin(rad) * length,
-      y: 140 - Math.cos(rad) * length
-    };
+  // Scale: -10 to +10 degrees maps to 0-100%
+  const SCALE_MIN = -10, SCALE_MAX = 10;
+  function toPercent(deg) {
+    return Math.max(1, Math.min(99, ((deg - SCALE_MIN) / (SCALE_MAX - SCALE_MIN)) * 100));
   }
 
-  const actualEnd = angleToCoords(actualAngle, 110);
-  const idealEnd = angleToCoords(idealAngle, 100);
-  const actualHead = angleToCoords(actualAngle, 120);
-  const idealHead = angleToCoords(idealAngle, 110);
-
-  // Arrow helper
-  function arrowHead(end, angle) {
-    const perpRad = ((angle + 90) * Math.PI) / 180;
-    const size = 8;
-    return `${end.x},${end.y} ${end.x - Math.cos(perpRad)*size},${end.y - Math.sin(perpRad)*size} ${end.x + Math.cos(perpRad)*size},${end.y + Math.sin(perpRad)*size}`;
+  // Position the marker
+  const markerPct = toPercent(val);
+  const marker = document.getElementById('path-marker');
+  const markerLabel = document.getElementById('path-marker-label');
+  if (marker) {
+    marker.style.left = markerPct + '%';
+    markerLabel.textContent = (val > 0 ? '+' : '') + val + '°';
   }
 
-  document.getElementById('actual-arrow-line').setAttribute('x2', actualEnd.x);
-  document.getElementById('actual-arrow-line').setAttribute('y2', actualEnd.y);
-  document.getElementById('actual-arrow-head').setAttribute('points', arrowHead(actualHead, actualAngle));
+  // Draw target zone
+  const targetMin = isDrawGoal ? 0 : -4;
+  const targetMax = isDrawGoal ? 4 : 0;
+  const zone = document.getElementById('path-target-zone');
+  if (zone) {
+    zone.style.left = toPercent(targetMin) + '%';
+    zone.style.width = (toPercent(targetMax) - toPercent(targetMin)) + '%';
+  }
 
-  document.getElementById('ideal-arrow-line').setAttribute('x2', idealEnd.x);
-  document.getElementById('ideal-arrow-line').setAttribute('y2', idealEnd.y);
-  document.getElementById('ideal-arrow-head').setAttribute('points', arrowHead(idealHead, idealAngle));
+  // Direction labels
+  const direction = val < -1 ? 'Out-to-In (fade/slice path)'
+                  : val > 1  ? 'In-to-Out (draw path)'
+                  : 'Neutral';
+  const inRange = val >= targetMin && val <= targetMax;
 
-  document.getElementById('path-actual-label').textContent =
-    `${actualAngle > 0 ? '+' : ''}${actualAngle}° (${actualAngle < 0 ? 'out-to-in' : 'in-to-out'})`;
+  const valueEl = document.getElementById('path-value-display');
+  const descEl  = document.getElementById('path-desc-display');
+  const targetEl = document.getElementById('path-target-display');
+  const targetDescEl = document.getElementById('path-target-desc');
 
-  const diff = Math.abs(actualAngle - idealAngle).toFixed(1);
-  const dir = actualAngle < idealAngle ? 'too far left (out-to-in)' : 'too far right (in-to-out)';
-  document.getElementById('path-explanation').textContent =
-    actualAngle >= (isDrawGoal ? 0 : -4) && actualAngle <= (isDrawGoal ? 4 : 0)
-      ? `Your path is in the ideal zone for a ${goal}. Keep this swing direction.`
-      : `Your path is ${diff}° ${dir} of ideal for a ${goal}. The green arrow shows where to aim.`;
+  if (valueEl) valueEl.textContent = (val > 0 ? '+' : '') + val + '°';
+  if (descEl)  descEl.textContent  = direction;
+  if (targetEl) targetEl.textContent = isDrawGoal ? '0° to +4°' : '-4° to 0°';
+  if (targetDescEl) targetDescEl.textContent = inRange
+    ? `You're in the ideal zone for a ${goal} ✓`
+    : `Shift your path ${val < targetMin ? 'more in-to-out' : 'more out-to-in'} by ~${Math.abs(val - (isDrawGoal ? 2 : -2)).toFixed(1)}°`;
 }
 
 // ── DRILL CARD BUILDER ────────────────────────────────────────────────────────
@@ -2557,82 +2719,67 @@ function buildDrillCards(clubPath, faceAngle, f2p, smash, handicap, goal) {
 
 // ── GRIP BUILDER ──────────────────────────────────────────────────────────────
 function buildGripCards(faceAngle, spinAxis, goal) {
+  let recommended = "neutral";
+  if (faceAngle !== null) {
+    if (faceAngle > 2) recommended = "strong";
+    else if (faceAngle < -2) recommended = "weak";
+    else if (goal === "draw") recommended = "strong";
+    else if (goal === "fade") recommended = "neutral";
+  } else if (goal === "draw") recommended = "strong";
+
   const grips = [
-    {
-      type: 'strong',
-      name: 'Strong Grip',
-      desc: "V's point to right shoulder. Naturally closes the face — promotes draw/hook.",
-      svgPath: buildGripSVG('strong'),
-      goodFor: ['draw']
-    },
-    {
-      type: 'neutral',
-      name: 'Neutral Grip',
-      desc: "V's point to chin. Standard for most shots — square face at impact.",
-      svgPath: buildGripSVG('neutral'),
-      goodFor: ['straight', 'draw', 'fade']
-    },
-    {
-      type: 'weak',
-      name: 'Weak Grip',
-      desc: "V's point to left shoulder. Naturally opens the face — promotes fade/slice.",
-      svgPath: buildGripSVG('weak'),
-      goodFor: ['fade']
-    }
+    { type: "strong", name: "Strong Grip", desc: "2-3 knuckles visible. Closes face naturally — good for drawing.", knuckles: 3, vDir: "Right shoulder", color: "#2d6a4f" },
+    { type: "neutral", name: "Neutral Grip", desc: "2 knuckles visible. Square face at impact — the standard.", knuckles: 2, vDir: "Chin", color: "#4a4a6a" },
+    { type: "weak", name: "Weak Grip", desc: "1 knuckle visible. Opens face naturally — good for fading.", knuckles: 1, vDir: "Left shoulder", color: "#457b9d" }
   ];
 
-  // Determine recommendation
-  let recommended = 'neutral';
-  if (faceAngle !== null) {
-    if (faceAngle > 2) recommended = 'strong';       // open face → stronger grip
-    else if (faceAngle < -2) recommended = 'weak';   // closed face → weaker grip
-    else if (goal === 'draw') recommended = 'strong';
-    else if (goal === 'fade') recommended = 'neutral';
-  } else if (goal === 'draw') recommended = 'strong';
-
-  const container = document.getElementById('grip-cards');
+  const container = document.getElementById("grip-cards");
   container.innerHTML = grips.map(g => `
-    <div class="grip-card ${g.type === recommended ? 'highlighted' : ''}">
-      ${g.svgPath}
+    <div class="grip-card ${g.type === recommended ? "highlighted" : ""}">
+      ${buildRealisticGripSVG(g.type, g.knuckles, g.color)}
       <div class="grip-card-name">${g.name}</div>
       <div class="grip-card-desc">${g.desc}</div>
+      <div style="font-size:0.7rem;color:var(--muted);margin-top:0.3rem;">V → <strong>${g.vDir}</strong></div>
       <div class="grip-recommended">★ Recommended for you</div>
     </div>
-  `).join('');
+  `).join("");
 }
 
-function buildGripSVG(type) {
-  const colors = { strong: '#2d6a4f', neutral: '#4a4a6a', weak: '#457b9d' };
-  const color = colors[type];
+function buildRealisticGripSVG(type, knuckles, color) {
+  const handRotate = type === "strong" ? 18 : type === "weak" ? -18 : 0;
+  const skin = "#e8c49a", skinDark = "#d4a876", skinShadow = "#c49060";
+  const kx = type === "strong" ? [22,31,40,49] : type === "weak" ? [30,39,48,57] : [26,35,44,53];
+  const dots = Array.from({length: knuckles}, (_,i) =>
+    `<circle cx="${kx[i]}" cy="36" r="3.5" fill="${skinDark}" stroke="${skinShadow}" stroke-width="0.5"/>`
+  ).join("");
+  const thumbCx = type === "strong" ? 58 : type === "weak" ? 32 : 58;
+  const thumbRot = type === "strong" ? -25 : type === "weak" ? 25 : -20;
 
-  // Simple SVG hand grip illustration
-  const rotation = type === 'strong' ? 15 : type === 'weak' ? -15 : 0;
-
-  return `<svg width="80" height="90" viewBox="0 0 80 90" style="margin:0 auto 0.75rem; display:block;">
-    <!-- Club grip -->
-    <rect x="36" y="5" width="8" height="60" rx="4" fill="#c9a96e"/>
-    <!-- Hand -->
-    <g transform="rotate(${rotation}, 40, 55)">
-      <rect x="20" y="40" width="40" height="35" rx="8" fill="${color}" opacity="0.9"/>
-      <!-- Fingers -->
-      <rect x="20" y="32" width="8" height="18" rx="4" fill="${color}"/>
-      <rect x="30" y="28" width="8" height="20" rx="4" fill="${color}"/>
-      <rect x="40" y="28" width="8" height="20" rx="4" fill="${color}"/>
-      <rect x="50" y="30" width="8" height="18" rx="4" fill="${color}"/>
-      <!-- Knuckle dots -->
-      <circle cx="24" cy="34" r="2" fill="rgba(255,255,255,0.3)"/>
-      <circle cx="34" cy="30" r="2" fill="rgba(255,255,255,0.3)"/>
-      <circle cx="44" cy="30" r="2" fill="rgba(255,255,255,0.3)"/>
-      <circle cx="54" cy="32" r="2" fill="rgba(255,255,255,0.3)"/>
+  return `<svg width="90" height="112" viewBox="0 0 90 112" style="margin:0 auto 0.5rem;display:block;">
+    <rect x="41" y="0" width="8" height="75" rx="4" fill="#c9a96e"/>
+    <rect x="42" y="0" width="3" height="75" rx="2" fill="#dfc080" opacity="0.5"/>
+    <g transform="rotate(${handRotate},45,60)">
+      <ellipse cx="45" cy="68" rx="22" ry="18" fill="${skin}"/>
+      <ellipse cx="45" cy="72" rx="20" ry="12" fill="${skinDark}" opacity="0.3"/>
+      <rect x="18" y="36" width="10" height="26" rx="5" fill="${skin}" stroke="${skinDark}" stroke-width="0.5"/>
+      <rect x="29" y="30" width="10" height="30" rx="5" fill="${skin}" stroke="${skinDark}" stroke-width="0.5"/>
+      <rect x="40" y="30" width="10" height="30" rx="5" fill="${skin}" stroke="${skinDark}" stroke-width="0.5"/>
+      <rect x="51" y="33" width="10" height="27" rx="5" fill="${skin}" stroke="${skinDark}" stroke-width="0.5"/>
+      <rect x="20" y="38" width="4" height="10" rx="2" fill="rgba(255,255,255,0.35)"/>
+      <rect x="31" y="32" width="4" height="10" rx="2" fill="rgba(255,255,255,0.35)"/>
+      <rect x="42" y="32" width="4" height="10" rx="2" fill="rgba(255,255,255,0.35)"/>
+      <rect x="53" y="35" width="4" height="10" rx="2" fill="rgba(255,255,255,0.35)"/>
+      ${dots}
+      <ellipse cx="${thumbCx}" cy="52" rx="7" ry="10"
+        transform="rotate(${thumbRot},${thumbCx},52)"
+        fill="${skin}" stroke="${skinDark}" stroke-width="0.5"/>
+      <path d="M38,55 Q45,52 52,55" stroke="${skinShadow}" stroke-width="1" fill="none" opacity="0.6"/>
     </g>
-    <!-- V indicator -->
-    <text x="40" y="88" text-anchor="middle" font-size="8" fill="${color}" font-family="DM Mono" font-weight="bold">V→${type === 'strong' ? 'R.SHOULDER' : type === 'weak' ? 'L.SHOULDER' : 'CHIN'}</text>
+    <text x="45" y="102" text-anchor="middle" font-size="9" fill="${color}" font-family="DM Mono" font-weight="bold">${knuckles} KNUCKLE${knuckles !== 1 ? "S" : ""} VISIBLE</text>
+    <text x="45" y="112" text-anchor="middle" font-size="7.5" fill="#9090aa" font-family="DM Sans">${type.toUpperCase()} GRIP</text>
   </svg>`;
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-initAuth();
-renderRoadmap('15-24');
 </script>
 </body>
 </html>
