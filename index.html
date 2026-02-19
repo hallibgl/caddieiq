@@ -98,6 +98,53 @@
     border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.83rem; display: none;
   }
 
+  /* ── PROFILE SETUP SCREEN ───────────────── */
+  #profile-setup-screen {
+    min-height: 100vh; display: none; align-items: center;
+    justify-content: center; background: var(--fairway); padding: 1.5rem;
+  }
+  .setup-box {
+    background: white; border-radius: 16px; padding: 2.5rem;
+    width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-height: 90vh; overflow-y: auto;
+  }
+  .setup-step {
+    display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem;
+    color: var(--muted); margin-bottom: 1.5rem; font-family: 'DM Mono', monospace;
+  }
+  .setup-step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-light); }
+  .avatar-grid { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .avatar-swatch {
+    width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+    border: 3px solid transparent; transition: all 0.2s;
+  }
+  .avatar-swatch:hover { transform: scale(1.15); }
+  .avatar-swatch.selected { border-color: var(--ink); transform: scale(1.15); }
+  .avatar-preview {
+    width: 70px; height: 70px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; color: white; margin: 0 auto 1.5rem; transition: background 0.3s;
+  }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem;
+    color: white; cursor: pointer; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.2);
+  }
+  .profile-info-card {
+    background: var(--fairway); border-radius: 12px; padding: 2rem;
+    display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; color: white;
+  }
+  .profile-big-avatar {
+    width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem;
+    color: white; flex-shrink: 0;
+  }
+  .profile-info-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 1px; color: var(--gold-light); }
+  .profile-info-meta { font-size: 0.83rem; color: rgba(255,255,255,0.65); margin-top: 0.3rem; line-height: 1.7; }
+  .profile-info-username { font-size: 0.82rem; color: var(--green-light); font-family: 'DM Mono', monospace; }
+
+
+
   /* ── APP SHELL ───────────────────────────── */
   #app-shell { display: none; }
 
@@ -274,6 +321,44 @@
   </div>
 </div>
 
+<!-- ── PROFILE SETUP SCREEN ─────────────────────────── -->
+<div id="profile-setup-screen">
+  <div class="setup-box">
+    <div class="auth-logo" style="text-align:center; margin-bottom:0.25rem;">Caddie <span style="color:var(--green-light)">IQ</span></div>
+    <div class="auth-tagline" style="text-align:center; margin-bottom:1.75rem;">Let's set up your golfer profile</div>
+    <div class="setup-step"><div class="setup-step-dot"></div> NEW ACCOUNT — ONE-TIME SETUP</div>
+    <div class="avatar-preview" id="setup-avatar-preview" style="background:#2d6a4f;">?</div>
+    <label>Full Name <span style="color:var(--danger)">*</span></label>
+    <input type="text" id="setup-fullname" placeholder="e.g. John Smith" oninput="updateAvatarPreview()">
+    <label>Username <span style="color:var(--danger)">*</span> <span style="color:var(--muted); font-weight:400">— shown on your profile</span></label>
+    <input type="text" id="setup-username" placeholder="e.g. johnsmith_golf">
+    <label>Home Course <span style="color:var(--muted); font-weight:400">— optional</span></label>
+    <input type="text" id="setup-course" placeholder="e.g. Pebble Beach Golf Links">
+    <label>Location <span style="color:var(--muted); font-weight:400">— optional</span></label>
+    <input type="text" id="setup-location" placeholder="e.g. Monterey, CA">
+    <label>Pick an Avatar Color</label>
+    <div class="avatar-grid" id="avatar-color-grid"></div>
+    <label>Your Handicap</label>
+    <select id="setup-handicap">
+      <option value="">Select...</option>
+      <option value="25+">25+ (Beginner)</option>
+      <option value="15-24" selected>15–24 (Mid)</option>
+      <option value="5-14">5–14 (Low-Mid)</option>
+      <option value="0-4">0–4 (Scratch)</option>
+    </select>
+    <label>Primary Shot Goal</label>
+    <select id="setup-goal">
+      <option value="draw">Play a Draw</option>
+      <option value="fade">Play a Fade</option>
+      <option value="straight">Hit it Straight</option>
+      <option value="distance">Add Distance</option>
+      <option value="consistency">Improve Consistency</option>
+    </select>
+    <div id="setup-error" class="auth-error" style="margin-bottom:1rem;"></div>
+    <button class="auth-btn" onclick="completeProfileSetup()" id="setup-btn">Start Using Caddie IQ →</button>
+  </div>
+</div>
+
 <!-- ── APP SHELL ────────────────────────────────────── -->
 <div id="app-shell">
   <header>
@@ -284,9 +369,10 @@
       <button onclick="showPanel('analyzer')">Shot Analyzer</button>
       <button onclick="showPanel('roadmap')">Improvement</button>
       <button onclick="showPanel('history')">History</button>
+      <button onclick="showPanel('profile')">My Profile</button>
     </nav>
     <div class="header-user">
-      <span id="user-email-display" style="display:none;"></span>
+      <div class="user-avatar" id="header-avatar" onclick="showPanel('profile')" title="My Profile" style="background:#2d6a4f;">?</div>
       <button class="signout-btn" onclick="signOut()">Sign Out</button>
     </div>
   </header>
@@ -507,6 +593,74 @@
       </div>
     </div>
 
+    <!-- MY PROFILE PANEL -->
+    <div id="panel-profile" class="panel">
+      <div class="section-title">My Profile</div>
+      <p class="section-sub">Your golfer identity — update anytime.</p>
+
+      <div class="profile-info-card" id="profile-display-card">
+        <div class="profile-big-avatar" id="profile-big-avatar" style="background:#2d6a4f;">?</div>
+        <div>
+          <div class="profile-info-name" id="profile-display-name">—</div>
+          <div class="profile-info-username" id="profile-display-username"></div>
+          <div class="profile-info-meta" id="profile-display-meta"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">✏️ Edit Profile</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div>
+            <label>Full Name</label>
+            <input type="text" id="edit-fullname" placeholder="Your full name">
+          </div>
+          <div>
+            <label>Username</label>
+            <input type="text" id="edit-username" placeholder="your_username">
+          </div>
+          <div>
+            <label>Home Course</label>
+            <input type="text" id="edit-course" placeholder="Your home course">
+          </div>
+          <div>
+            <label>Location</label>
+            <input type="text" id="edit-location" placeholder="City, State">
+          </div>
+          <div>
+            <label>Handicap</label>
+            <select id="edit-handicap">
+              <option value="">Select...</option>
+              <option value="25+">25+ (Beginner)</option>
+              <option value="15-24">15–24 (Mid)</option>
+              <option value="5-14">5–14 (Low-Mid)</option>
+              <option value="0-4">0–4 (Scratch)</option>
+            </select>
+          </div>
+          <div>
+            <label>Shot Goal</label>
+            <select id="edit-goal">
+              <option value="draw">Play a Draw</option>
+              <option value="fade">Play a Fade</option>
+              <option value="straight">Hit it Straight</option>
+              <option value="distance">Add Distance</option>
+              <option value="consistency">Improve Consistency</option>
+            </select>
+          </div>
+        </div>
+        <label style="margin-top:0.5rem;">Avatar Color</label>
+        <div class="avatar-grid" id="edit-avatar-grid"></div>
+        <br>
+        <button class="btn btn-primary" onclick="saveEditedProfile()">💾 Save Changes</button>
+        <span id="profile-save-msg" style="margin-left:1rem; font-size:0.85rem; color:var(--green); display:none;">✅ Saved!</span>
+      </div>
+
+      <div class="card" style="background:#fff8f8; border-color:#ffd0d0;">
+        <div class="card-title" style="color:var(--danger);">⚠️ Account</div>
+        <p style="font-size:0.85rem; color:var(--mid); margin-bottom:1rem;">Signed in as <strong id="profile-email-display"></strong></p>
+        <button class="btn" style="background:#fff0f0; color:var(--danger); border:1px solid #ffb3ba;" onclick="signOut()">Sign Out</button>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -514,15 +668,15 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 // ⚠️  REPLACE THESE with your actual Supabase project values
 // Find them at: supabase.com → your project → Settings → API
-const SUPABASE_URL = 'https://lcedamercezvwpombihf.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjZWRhbWVyY2V6dndwb21iaWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0NjE2MzUsImV4cCI6MjA4NzAzNzYzNX0.r0m6f4ycWDlWEfMPGn5HV0ZL7Rs9G3kKuHy5iI1bngU';
+const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY_HERE';
 
 // ─── SUPABASE INIT ────────────────────────────────────────────────────────────
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
-let userProfile = { handicap: '15-24', goal: 'draw' };
+let userProfile = { handicap: '15-24', goal: 'draw', full_name: '', username: '', avatar_color: '#2d6a4f', home_course: '', location: '' };
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
 async function initAuth() {
@@ -543,14 +697,23 @@ async function initAuth() {
 async function onSignedIn(user) {
   currentUser = user;
   document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app-shell').style.display = 'block';
 
-  const emailDisplay = document.getElementById('user-email-display');
-  if (emailDisplay) {
-    emailDisplay.textContent = user.email;
-    emailDisplay.style.display = 'block';
+  const { data: existingProfile } = await db
+    .from('profiles').select('full_name').eq('user_id', user.id).single();
+
+  if (!existingProfile || !existingProfile.full_name) {
+    // New user — show profile setup
+    document.getElementById('profile-setup-screen').style.display = 'flex';
+    initAvatarGrid('avatar-color-grid');
+    return;
   }
 
+  await showApp(user);
+}
+
+async function showApp(user) {
+  document.getElementById('profile-setup-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'block';
   await loadProfile();
   await loadHistory();
   renderRoadmap(userProfile.handicap || '15-24');
@@ -559,6 +722,7 @@ async function onSignedIn(user) {
 function onSignedOut() {
   currentUser = null;
   document.getElementById('app-shell').style.display = 'none';
+  document.getElementById('profile-setup-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'flex';
 }
 
@@ -633,34 +797,195 @@ async function loadProfile() {
   if (!currentUser) return;
 
   const { data } = await db
-    .from('profiles')
-    .select('*')
-    .eq('user_id', currentUser.id)
-    .single();
+    .from('profiles').select('*').eq('user_id', currentUser.id).single();
 
   if (data) {
-    userProfile = { handicap: data.handicap || '15-24', goal: data.goal || 'draw' };
+    userProfile = {
+      handicap: data.handicap || '15-24',
+      goal: data.goal || 'draw',
+      full_name: data.full_name || '',
+      username: data.username || '',
+      avatar_color: data.avatar_color || '#2d6a4f',
+      home_course: data.home_course || '',
+      location: data.location || ''
+    };
   }
 
-  document.getElementById('profile-handicap').value = userProfile.handicap || '';
-  document.getElementById('profile-goal').value = userProfile.goal || '';
+  // Dashboard profile selects
+  const hEl = document.getElementById('profile-handicap');
+  const gEl = document.getElementById('profile-goal');
+  if (hEl) hEl.value = userProfile.handicap || '';
+  if (gEl) gEl.value = userProfile.goal || '';
   document.getElementById('stat-handicap').textContent = userProfile.handicap || '—';
+
+  // Header avatar
+  updateHeaderAvatar();
+
+  // Populate edit form
+  const ef = document.getElementById('edit-fullname');
+  if (ef) {
+    ef.value = userProfile.full_name || '';
+    document.getElementById('edit-username').value = userProfile.username || '';
+    document.getElementById('edit-course').value = userProfile.home_course || '';
+    document.getElementById('edit-location').value = userProfile.location || '';
+    document.getElementById('edit-handicap').value = userProfile.handicap || '';
+    document.getElementById('edit-goal').value = userProfile.goal || '';
+    document.getElementById('profile-email-display').textContent = currentUser.email;
+  }
+
+  // Profile display card
+  renderProfileCard();
+  initAvatarGrid('edit-avatar-grid', userProfile.avatar_color);
+}
+
+function updateHeaderAvatar() {
+  const el = document.getElementById('header-avatar');
+  if (!el) return;
+  const initials = getInitials(userProfile.full_name) || '?';
+  el.textContent = initials;
+  el.style.background = userProfile.avatar_color || '#2d6a4f';
+}
+
+function getInitials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(' ');
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  return name.substring(0, 2).toUpperCase();
+}
+
+function renderProfileCard() {
+  const bigAvatar = document.getElementById('profile-big-avatar');
+  const nameEl = document.getElementById('profile-display-name');
+  const usernameEl = document.getElementById('profile-display-username');
+  const metaEl = document.getElementById('profile-display-meta');
+  if (!bigAvatar) return;
+
+  bigAvatar.textContent = getInitials(userProfile.full_name);
+  bigAvatar.style.background = userProfile.avatar_color || '#2d6a4f';
+  nameEl.textContent = userProfile.full_name || currentUser?.email || '—';
+  usernameEl.textContent = userProfile.username ? '@' + userProfile.username : '';
+
+  let meta = [];
+  if (userProfile.handicap) meta.push('⛳ ' + userProfile.handicap + ' Handicap');
+  if (userProfile.home_course) meta.push('🏌️ ' + userProfile.home_course);
+  if (userProfile.location) meta.push('📍 ' + userProfile.location);
+  metaEl.innerHTML = meta.join('<br>');
+}
+
+const AVATAR_COLORS = ['#2d6a4f','#1b4332','#52b788','#f4a261','#e63946','#457b9d','#6a2d6a','#8b4513','#2c3e8c','#4a4a6a'];
+
+function initAvatarGrid(gridId, selectedColor) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  grid.innerHTML = '';
+  const sel = selectedColor || userProfile.avatar_color || '#2d6a4f';
+  AVATAR_COLORS.forEach(color => {
+    const div = document.createElement('div');
+    div.className = 'avatar-swatch' + (color === sel ? ' selected' : '');
+    div.style.background = color;
+    div.onclick = () => {
+      grid.querySelectorAll('.avatar-swatch').forEach(s => s.classList.remove('selected'));
+      div.classList.add('selected');
+      userProfile.avatar_color = color;
+      // Update preview if on setup screen
+      const prev = document.getElementById('setup-avatar-preview');
+      if (prev) prev.style.background = color;
+    };
+    grid.appendChild(div);
+  });
+}
+
+function updateAvatarPreview() {
+  const name = document.getElementById('setup-fullname')?.value || '';
+  const prev = document.getElementById('setup-avatar-preview');
+  if (prev) prev.textContent = getInitials(name) || '?';
 }
 
 async function saveProfile() {
   if (!currentUser) return;
   const handicap = document.getElementById('profile-handicap').value;
   const goal = document.getElementById('profile-goal').value;
-  userProfile = { handicap, goal };
+  userProfile.handicap = handicap;
+  userProfile.goal = goal;
 
   await db.from('profiles').upsert({
     user_id: currentUser.id,
-    handicap,
-    goal,
+    handicap, goal,
     updated_at: new Date().toISOString()
   }, { onConflict: 'user_id' });
 
   document.getElementById('stat-handicap').textContent = handicap || '—';
+}
+
+async function completeProfileSetup() {
+  const fullName = document.getElementById('setup-fullname').value.trim();
+  const username = document.getElementById('setup-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  const course = document.getElementById('setup-course').value.trim();
+  const location = document.getElementById('setup-location').value.trim();
+  const handicap = document.getElementById('setup-handicap').value;
+  const goal = document.getElementById('setup-goal').value;
+
+  const errEl = document.getElementById('setup-error');
+  if (!fullName) { errEl.textContent = 'Please enter your full name.'; errEl.style.display='block'; return; }
+  if (!username) { errEl.textContent = 'Please enter a username.'; errEl.style.display='block'; return; }
+  errEl.style.display = 'none';
+
+  const btn = document.getElementById('setup-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  const avatarColor = userProfile.avatar_color || '#2d6a4f';
+
+  const { error } = await db.from('profiles').upsert({
+    user_id: currentUser.id,
+    full_name: fullName,
+    username,
+    home_course: course,
+    location,
+    handicap: handicap || '15-24',
+    goal: goal || 'draw',
+    avatar_color: avatarColor,
+    joined_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'user_id' });
+
+  if (error) {
+    errEl.textContent = error.message.includes('unique') ? 'That username is already taken. Try another.' : error.message;
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Start Using Caddie IQ →';
+    return;
+  }
+
+  userProfile = { full_name: fullName, username, home_course: course, location, handicap: handicap || '15-24', goal: goal || 'draw', avatar_color: avatarColor };
+  btn.disabled = false;
+  await showApp(currentUser);
+}
+
+async function saveEditedProfile() {
+  if (!currentUser) return;
+  const fullName = document.getElementById('edit-fullname').value.trim();
+  const username = document.getElementById('edit-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  const course = document.getElementById('edit-course').value.trim();
+  const location = document.getElementById('edit-location').value.trim();
+  const handicap = document.getElementById('edit-handicap').value;
+  const goal = document.getElementById('edit-goal').value;
+
+  const { error } = await db.from('profiles').upsert({
+    user_id: currentUser.id,
+    full_name: fullName, username,
+    home_course: course, location,
+    handicap, goal,
+    avatar_color: userProfile.avatar_color,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'user_id' });
+
+  if (!error) {
+    userProfile = { ...userProfile, full_name: fullName, username, home_course: course, location, handicap, goal };
+    updateHeaderAvatar();
+    renderProfileCard();
+    document.getElementById('stat-handicap').textContent = handicap || '—';
+    const msg = document.getElementById('profile-save-msg');
+    msg.style.display = 'inline'; setTimeout(() => msg.style.display = 'none', 3000);
+  }
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────────────────────────
@@ -668,10 +993,11 @@ function showPanel(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
-  const names = ['dashboard', 'upload', 'analyzer', 'roadmap', 'history'];
+  const names = ['dashboard', 'upload', 'analyzer', 'roadmap', 'history', 'profile'];
   document.querySelectorAll('nav button')[names.indexOf(name)]?.classList.add('active');
   if (name === 'roadmap') renderRoadmap(userProfile.handicap || '15-24');
   if (name === 'history') loadHistory();
+  if (name === 'profile') { renderProfileCard(); initAvatarGrid('edit-avatar-grid', userProfile.avatar_color); }
 }
 
 // ─── CLAUDE API (via Vercel function — key is safe on server) ─────────────────
