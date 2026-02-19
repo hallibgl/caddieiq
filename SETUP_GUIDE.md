@@ -22,7 +22,7 @@
 4. Click **"Create Key"** → name it "CaddieIQ"
 5. **Copy the key** — it starts with `sk-ant-...`
 6. Save it somewhere safe — you only see it once!
-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
+
 
 ---
 
