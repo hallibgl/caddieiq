@@ -284,6 +284,180 @@
     font-size: 0.72rem; font-weight: 600;
   }
   .db-badge::before { content: '●'; font-size: 0.6rem; }
+
+  /* ── PLAIN ENGLISH CARD ─────────────────── */
+  .plain-english-card {
+    background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.5rem;
+    color: white;
+    display: none;
+    animation: fadeIn 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .plain-english-card::after {
+    content: '🏌️';
+    position: absolute;
+    right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    opacity: 0.1;
+  }
+  .pe-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .pe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 700px) { .pe-grid { grid-template-columns: 1fr; } }
+  .pe-item { padding: 0; }
+  .pe-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
+  .pe-item-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .pe-item-label.problem { color: #ff8080; }
+  .pe-item-label.fix { color: var(--gold-light); }
+  .pe-item-label.watch { color: var(--green-light); }
+  .pe-item-text {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.88);
+  }
+  .pe-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.15);
+  }
+  @media (max-width: 700px) { .pe-divider { display: none; } }
+
+  /* ── WORK ON TODAY BUTTON ───────────────── */
+  .wot-card {
+    background: var(--gold);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    width: 100%;
+    text-align: left;
+  }
+  .wot-card:hover { background: #e8924f; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(244,162,97,0.35); }
+  .wot-card-left { display: flex; align-items: center; gap: 1rem; }
+  .wot-icon { font-size: 2rem; }
+  .wot-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: white; letter-spacing: 1px; }
+  .wot-sub { font-size: 0.8rem; color: rgba(255,255,255,0.8); margin-top: 0.1rem; }
+  .wot-arrow { font-size: 1.5rem; color: rgba(255,255,255,0.7); }
+
+  .wot-result {
+    background: var(--fairway);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .wot-result.visible { display: block; }
+
+  /* ── PROGRESS SNAPSHOT ──────────────────── */
+  .progress-snapshot {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .ps-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    color: var(--green);
+    margin-bottom: 1.25rem;
+  }
+  .ps-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+  .ps-metric {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .ps-metric-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .ps-metric-values {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+  .ps-old { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--muted); }
+  .ps-arrow-icon { color: var(--muted); font-size: 0.8rem; }
+  .ps-new { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--fairway); }
+  .ps-trend {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    display: inline-block;
+  }
+  .ps-trend.better { background: var(--green-pale); color: var(--green); }
+  .ps-trend.worse { background: #ffeaec; color: var(--danger); }
+  .ps-trend.neutral { background: #f0f0f0; color: var(--muted); }
+  .ps-caption {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 1rem;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* ── SESSION NOTES ──────────────────────── */
+  .notes-card {
+    background: #fffdf5;
+    border: 1.5px solid var(--gold-light);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .notes-card.visible { display: block; }
+  .notes-card label { color: var(--mid); }
+  .notes-card textarea {
+    border-color: #f4d06a;
+    background: white;
+    margin-bottom: 0.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    resize: vertical;
+  }
+  .notes-card textarea:focus { border-color: var(--gold); }
+
 </style>
 </head>
 <body>
@@ -418,6 +592,31 @@
         </div>
       </div>
 
+      <!-- WORK ON TODAY BUTTON -->
+      <button class="wot-card" onclick="getWorkOnToday()">
+        <div class="wot-card-left">
+          <div class="wot-icon">🎯</div>
+          <div>
+            <div class="wot-title">What Should I Work On Today?</div>
+            <div class="wot-sub">AI picks your focus based on your last sessions</div>
+          </div>
+        </div>
+        <div class="wot-arrow">→</div>
+      </button>
+
+      <!-- WORK ON TODAY RESULT -->
+      <div id="wot-result" class="wot-result">
+        <div class="ai-label">TODAY'S PRACTICE FOCUS</div>
+        <div class="ai-body" id="wot-body"></div>
+      </div>
+
+      <!-- PROGRESS SNAPSHOT -->
+      <div id="progress-snapshot" class="progress-snapshot" style="display:none;">
+        <div class="ps-title">📈 Your Progress</div>
+        <div class="ps-metrics" id="ps-metrics-grid"></div>
+        <div class="ps-caption" id="ps-caption"></div>
+      </div>
+
       <div id="recent-analyses-wrap">
         <div class="card-title" style="font-family:'Bebas Neue'; font-size:1.1rem; letter-spacing:1px; color:var(--green); margin-bottom:1rem;">📋 Recent Analyses</div>
         <div class="empty-state">
@@ -450,8 +649,38 @@
         <div class="card">
           <div class="card-title">📊 Parsed Shot Data</div>
           <div class="data-table-wrap" id="table-container"></div>
+
+          <!-- SESSION NOTES -->
+          <div class="notes-card visible" style="margin-top:1rem;">
+            <label>📝 Session Notes <span style="color:var(--muted); font-weight:400">— optional, helps the AI and your instructor</span></label>
+            <textarea id="session-notes" rows="2" placeholder="e.g. Felt like I was coming over the top today. Trying to work on shallowing the club..."></textarea>
+          </div>
           <br>
           <button class="btn btn-primary" onclick="analyzeUploadedData()" id="analyze-btn">🤖 Analyze with AI Caddie</button>
+        </div>
+      </div>
+
+      <!-- PLAIN ENGLISH CARD -->
+      <div id="pe-card-upload" class="plain-english-card">
+        <div class="pe-label">⚡ Plain English Summary</div>
+        <div class="pe-grid">
+          <div class="pe-item">
+            <div class="pe-icon">🔴</div>
+            <div class="pe-item-label problem">The Problem</div>
+            <div class="pe-item-text" id="pe-problem-upload">—</div>
+          </div>
+          <div class="pe-divider"></div>
+          <div class="pe-item">
+            <div class="pe-icon">🎯</div>
+            <div class="pe-item-label fix">The Fix</div>
+            <div class="pe-item-text" id="pe-fix-upload">—</div>
+          </div>
+          <div class="pe-divider"></div>
+          <div class="pe-item">
+            <div class="pe-icon">👀</div>
+            <div class="pe-item-label watch">Watch This Number</div>
+            <div class="pe-item-text" id="pe-watch-upload">—</div>
+          </div>
         </div>
       </div>
 
@@ -537,6 +766,30 @@
               </svg>
               <div style="position:absolute; bottom:0.75rem; left:50%; transform:translateX(-50%); font-size:0.72rem; color:rgba(255,255,255,0.35); font-family:'DM Mono'; white-space:nowrap;">
                 Updates live as you type
+              </div>
+            </div>
+          </div>
+
+          <!-- PLAIN ENGLISH CARD - SHOT ANALYZER -->
+          <div id="pe-card-shot" class="plain-english-card">
+            <div class="pe-label">⚡ Plain English Summary</div>
+            <div class="pe-grid">
+              <div class="pe-item">
+                <div class="pe-icon">🔴</div>
+                <div class="pe-item-label problem">The Problem</div>
+                <div class="pe-item-text" id="pe-problem-shot">—</div>
+              </div>
+              <div class="pe-divider"></div>
+              <div class="pe-item">
+                <div class="pe-icon">🎯</div>
+                <div class="pe-item-label fix">The Fix</div>
+                <div class="pe-item-text" id="pe-fix-shot">—</div>
+              </div>
+              <div class="pe-divider"></div>
+              <div class="pe-item">
+                <div class="pe-icon">👀</div>
+                <div class="pe-item-label watch">Watch This Number</div>
+                <div class="pe-item-text" id="pe-watch-shot">—</div>
               </div>
             </div>
           </div>
@@ -717,6 +970,7 @@ async function showApp(user) {
   await loadProfile();
   await loadHistory();
   renderRoadmap(userProfile.handicap || '15-24');
+  buildProgressSnapshot();
 }
 
 function onSignedOut() {
@@ -998,6 +1252,7 @@ function showPanel(name) {
   if (name === 'roadmap') renderRoadmap(userProfile.handicap || '15-24');
   if (name === 'history') loadHistory();
   if (name === 'profile') { renderProfileCard(); initAvatarGrid('edit-avatar-grid', userProfile.avatar_color); }
+  if (name === 'dashboard') buildProgressSnapshot();
 }
 
 // ─── CLAUDE API (via Vercel function — key is safe on server) ─────────────────
@@ -1119,29 +1374,51 @@ async function analyzeUploadedData() {
   const sample = parsedData.slice(0, 10).map(r => JSON.stringify(r)).join('\n');
   const handicap = userProfile.handicap || '15-24';
   const goal = userProfile.goal || 'draw';
+  const notes = document.getElementById('session-notes')?.value?.trim() || '';
 
-  const prompt = `Analyze this Trackman golf session data for a ${handicap} handicap golfer whose goal is to hit a ${goal}:
+  const prompt = `Analyze this Trackman golf session data for a ${handicap} handicap golfer whose goal is to hit a ${goal}.
+${notes ? `Golfer's own notes from this session: "${notes}"` : ''}
 
+Data:
 ${sample}
-
 Total shots: ${parsedData.length}
 
-Please provide:
+Please provide two sections:
+
+PLAIN_ENGLISH_JSON (output this exact JSON first, no markdown):
+{"problem":"one sentence, plain English, what is wrong with their ball flight","fix":"one sentence, a simple feel cue they can use on the range","watch":"one metric and target number to focus on"}
+
+Then provide the full analysis:
 1. **Shot Pattern Summary** — What is the dominant ball flight and why?
 2. **The D-Plane Explained** — Simply explain what their data says about why the ball curves.
 3. **Top 3 Fixes** — Specific, actionable changes to achieve their desired ${goal}.
 4. **Consistency Check** — Any concerning variance in the data?
 5. **One Drill** — The single best drill for a ${handicap} handicap golfer right now.
-
-Keep advice appropriate for a ${handicap} handicap golfer.`;
+${notes ? '6. **Session Notes Response** — Respond to the golfer\'s own notes above.' : ''}`;
 
   try {
     const result = await askClaude(prompt);
-    responseEl.innerHTML = '<div class="ai-label">ANALYSIS COMPLETE</div><div class="ai-body"></div>';
-    streamToElement(responseEl.querySelector('.ai-body'), result);
 
-    await saveAnalysis('CSV Session Analysis', result, `${parsedData.length} shots · ${parsedFilename}`, 'upload', parsedData.slice(0, 50));
+    // Extract plain english JSON
+    const peMatch = result.match(/\{[^}]*"problem"[^}]*\}/);
+    if (peMatch) {
+      try {
+        const pe = JSON.parse(peMatch[0]);
+        document.getElementById('pe-problem-upload').textContent = pe.problem || '—';
+        document.getElementById('pe-fix-upload').textContent = pe.fix || '—';
+        document.getElementById('pe-watch-upload').textContent = pe.watch || '—';
+        document.getElementById('pe-card-upload').style.display = 'block';
+      } catch(e) {}
+    }
+
+    // Strip the JSON from the displayed analysis
+    const cleanResult = result.replace(/PLAIN_ENGLISH_JSON[\s\S]*?\{[^}]*\}/, '').trim();
+    responseEl.innerHTML = '<div class="ai-label">FULL ANALYSIS</div><div class="ai-body"></div>';
+    streamToElement(responseEl.querySelector('.ai-body'), cleanResult);
+
+    await saveAnalysis('CSV Session Analysis', result, `${parsedData.length} shots · ${parsedFilename}`, 'upload', parsedData.slice(0, 50), notes);
     await loadHistory();
+    buildProgressSnapshot();
   } catch(e) {
     responseEl.innerHTML = `<div style="color:#ff8080">⚠️ ${e.message || 'Error connecting. Check your setup.'}</div>`;
   }
@@ -1199,19 +1476,36 @@ Ball Speed: ${ballspeed || 'not provided'} mph
 Club Speed: ${clubspeed || 'not provided'} mph
 Smash Factor: ${smash}
 
-Please explain:
-1. **What Your Ball Is Doing** — Describe the actual shot shape this data produces and why.
+Please provide two sections:
+
+PLAIN_ENGLISH_JSON (output this exact JSON first, no markdown):
+{"problem":"one sentence plain English what is causing their shot shape issue","fix":"one simple feel cue they can try immediately on the range","watch":"the single most important number to change and the target value"}
+
+Then the full diagnosis:
+1. **What Your Ball Is Doing** — Describe the actual shot shape and why.
 2. **Why You're Not Hitting a ${shape}** — Specific numbers causing the issue.
 3. **Exact Changes Needed** — What numbers need to change and by how much?
 4. **Feel Cues** — 2 feel-based tips a golfer can use on the range.
-5. **Contact Quality** — Is their smash factor of ${smash} good for a ${club}?
-
-Be direct and specific.`;
+5. **Contact Quality** — Is their smash factor of ${smash} good for a ${club}?`;
 
   try {
     const result = await askClaude(prompt);
+
+    // Extract plain english JSON
+    const peMatch = result.match(/\{[^}]*"problem"[^}]*\}/);
+    if (peMatch) {
+      try {
+        const pe = JSON.parse(peMatch[0]);
+        document.getElementById('pe-problem-shot').textContent = pe.problem || '—';
+        document.getElementById('pe-fix-shot').textContent = pe.fix || '—';
+        document.getElementById('pe-watch-shot').textContent = pe.watch || '—';
+        document.getElementById('pe-card-shot').style.display = 'block';
+      } catch(e) {}
+    }
+
+    const cleanResult = result.replace(/PLAIN_ENGLISH_JSON[\s\S]*?\{[^}]*\}/, '').trim();
     responseEl.innerHTML = '<div class="ai-label">DIAGNOSIS COMPLETE</div><div class="ai-body"></div>';
-    streamToElement(responseEl.querySelector('.ai-body'), result);
+    streamToElement(responseEl.querySelector('.ai-body'), cleanResult);
     updateShotViz();
 
     await saveAnalysis(`${club} Shot Analysis`, result, `Goal: ${shape} · HC: ${handicap}`, 'shot_analyzer');
@@ -1308,7 +1602,7 @@ Keep it conversational and encouraging.`;
 }
 
 // ─── DATABASE ─────────────────────────────────────────────────────────────────
-async function saveAnalysis(title, content, subtitle, sessionType, rawData) {
+async function saveAnalysis(title, content, subtitle, sessionType, rawData, notes) {
   if (!currentUser) return;
 
   await db.from('analyses').insert({
@@ -1318,7 +1612,8 @@ async function saveAnalysis(title, content, subtitle, sessionType, rawData) {
     content,
     session_type: sessionType || 'manual',
     raw_data: rawData || null,
-    handicap_at_time: userProfile.handicap
+    handicap_at_time: userProfile.handicap,
+    session_notes: notes || ''
   });
 }
 
@@ -1425,6 +1720,149 @@ async function clearHistory() {
   if (!currentUser || !confirm('Delete all your history? This cannot be undone.')) return;
   await db.from('analyses').delete().eq('user_id', currentUser.id);
   await loadHistory();
+}
+
+
+// ── WORK ON TODAY ─────────────────────────────────────────────────────────────
+async function getWorkOnToday() {
+  const resultEl = document.getElementById('wot-result');
+  const bodyEl = document.getElementById('wot-body');
+  resultEl.classList.add('visible');
+  bodyEl.innerHTML = '<div class="loading"><div class="spinner"></div>Looking at your recent sessions...</div>';
+
+  const { data: recent } = await db
+    .from('analyses')
+    .select('content, created_at, handicap_at_time, session_notes')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false })
+    .limit(5);
+
+  const handicap = userProfile.handicap || '15-24';
+  const goal = userProfile.goal || 'draw';
+
+  let sessionSummary = 'No previous sessions yet.';
+  if (recent && recent.length) {
+    sessionSummary = recent.map((s, i) => {
+      const d = new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const preview = s.content.replace(/\*\*/g, '').substring(0, 300);
+      const notes = s.session_notes ? `\nGolfer notes: "${s.session_notes}"` : '';
+      return `Session ${i+1} (${d}): ${preview}${notes}`;
+    }).join('\n\n');
+  }
+
+  const prompt = `You are a golf coach reviewing a ${handicap} handicap golfer's recent Trackman sessions. Their goal is to hit a ${goal}.
+
+Recent sessions:
+${sessionSummary}
+
+Give them a focused, specific practice plan for TODAY's range session. Be direct and motivating. Format as:
+
+**Today's Focus:** [one specific thing — e.g. "Club Path — getting it from -3.5° to neutral"]
+
+**Why This:** [one sentence connecting it to their recent data]
+
+**The Drill:** [one specific drill with clear instructions — reps, setup, what to feel]
+
+**Success Looks Like:** [what number or feel tells them it's working]
+
+**Time Split:** [e.g. 30 balls on this, 15 balls playing shots]
+
+Keep it tight — this should feel like a note from their caddie before a practice session, not a lecture.`;
+
+  try {
+    const result = await askClaude(prompt);
+    bodyEl.innerHTML = '';
+    streamToElement(bodyEl, result);
+  } catch(e) {
+    bodyEl.innerHTML = '<span style="color:#ff8080">⚠️ Could not load recommendation. Try again.</span>';
+  }
+}
+
+// ── PROGRESS SNAPSHOT ─────────────────────────────────────────────────────────
+async function buildProgressSnapshot() {
+  if (!currentUser) return;
+
+  const { data } = await db
+    .from('analyses')
+    .select('content, created_at')
+    .eq('user_id', currentUser.id)
+    .eq('session_type', 'upload')
+    .order('created_at', { ascending: true });
+
+  if (!data || data.length < 2) return; // Need at least 2 sessions
+
+  // Extract numeric metrics from analysis text
+  function extractMetric(text, pattern) {
+    const match = text.match(pattern);
+    return match ? parseFloat(match[1]) : null;
+  }
+
+  const first = data[0].content;
+  const last = data[data.length - 1].content;
+
+  const metrics = [
+    {
+      name: 'Club Path',
+      unit: '°',
+      first: extractMetric(first, /club path[^:]*:\s*([-+]?\d+\.?\d*)/i),
+      last: extractMetric(last, /club path[^:]*:\s*([-+]?\d+\.?\d*)/i),
+      betterDirection: 'toward-zero', // closer to 0 is better
+      target: '0°'
+    },
+    {
+      name: 'Face Angle',
+      unit: '°',
+      first: extractMetric(first, /face angle[^:]*:\s*([-+]?\d+\.?\d*)/i),
+      last: extractMetric(last, /face angle[^:]*:\s*([-+]?\d+\.?\d*)/i),
+      betterDirection: 'toward-zero',
+      target: '0°'
+    },
+    {
+      name: 'Smash Factor',
+      unit: '',
+      first: extractMetric(first, /smash factor[^:]*:\s*(\d+\.?\d*)/i),
+      last: extractMetric(last, /smash factor[^:]*:\s*(\d+\.?\d*)/i),
+      betterDirection: 'higher',
+      target: '1.45'
+    }
+  ].filter(m => m.first !== null && m.last !== null && m.first !== m.last);
+
+  if (!metrics.length) return;
+
+  const firstDate = new Date(data[0].created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const lastDate = new Date(data[data.length-1].created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  let html = '';
+  metrics.forEach(m => {
+    let trend = 'neutral';
+    let trendLabel = 'No change';
+
+    if (m.betterDirection === 'toward-zero') {
+      const firstAbs = Math.abs(m.first);
+      const lastAbs = Math.abs(m.last);
+      if (lastAbs < firstAbs) { trend = 'better'; trendLabel = '✓ Improving'; }
+      else if (lastAbs > firstAbs) { trend = 'worse'; trendLabel = 'Needs work'; }
+    } else if (m.betterDirection === 'higher') {
+      if (m.last > m.first) { trend = 'better'; trendLabel = '✓ Improving'; }
+      else if (m.last < m.first) { trend = 'worse'; trendLabel = 'Needs work'; }
+    }
+
+    html += `
+      <div class="ps-metric">
+        <div class="ps-metric-name">${m.name}</div>
+        <div class="ps-metric-values">
+          <div class="ps-old">${m.first}${m.unit}</div>
+          <div class="ps-arrow-icon">→</div>
+          <div class="ps-new">${m.last}${m.unit}</div>
+        </div>
+        <div class="ps-trend ${trend}">${trendLabel}</div>
+      </div>`;
+  });
+
+  document.getElementById('ps-metrics-grid').innerHTML = html;
+  document.getElementById('ps-caption').textContent =
+    `Based on ${data.length} sessions · ${firstDate} → ${lastDate} · Target: neutral numbers`;
+  document.getElementById('progress-snapshot').style.display = 'block';
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
