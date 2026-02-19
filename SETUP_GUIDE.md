@@ -27,7 +27,7 @@
 ---
 
 ## STEP 2 — Set Up Supabase (Database + Login)
-https://lcedamercezvwpombihf.supabase.co
+
 1. Go to **supabase.com** → click "Start your project" → sign in with GitHub
 2. Click **"New Project"**
    - Name: `caddieiq`
