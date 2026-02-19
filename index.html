@@ -458,6 +458,326 @@
   }
   .notes-card textarea:focus { border-color: var(--gold); }
 
+
+  /* ── VISUAL DASHBOARD ───────────────────── */
+  .visual-dashboard {
+    display: none;
+    animation: fadeIn 0.4s ease;
+    margin-bottom: 1.5rem;
+  }
+  .visual-dashboard.visible { display: block; }
+
+  .vd-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 1.5rem 0 0.75rem;
+  }
+  .vd-section-label:first-child { margin-top: 0; }
+
+  /* Gauge Cards */
+  .gauge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .gauge-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gauge-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+  .gauge-card.green::before { background: var(--green-light); }
+  .gauge-card.yellow::before { background: var(--gold-light); }
+  .gauge-card.red::before { background: var(--danger); }
+
+  .gauge-metric-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .gauge-values {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .gauge-actual {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .gauge-unit {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .gauge-target-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .gauge-bar-track {
+    height: 8px;
+    background: #eee;
+    border-radius: 20px;
+    overflow: visible;
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+
+  .gauge-bar-range {
+    position: absolute;
+    height: 100%;
+    border-radius: 20px;
+    background: var(--green-pale);
+  }
+
+  .gauge-bar-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .gauge-card.green .gauge-bar-marker { background: var(--green); }
+  .gauge-card.yellow .gauge-bar-marker { background: var(--gold); }
+  .gauge-card.red .gauge-bar-marker { background: var(--danger); }
+
+  .gauge-status {
+    font-size: 0.73rem;
+    font-weight: 600;
+  }
+  .gauge-card.green .gauge-status { color: var(--green); }
+  .gauge-card.yellow .gauge-status { color: #b07000; }
+  .gauge-card.red .gauge-status { color: var(--danger); }
+
+  /* Club Path Arrow Diagram */
+  .path-diagram-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .path-diagram-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .path-diagram-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .path-svg-wrap { flex-shrink: 0; }
+
+  .path-legend { flex: 1; }
+  .path-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    color: var(--mid);
+    margin-bottom: 0.6rem;
+  }
+  .path-legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Drill Cards */
+  .drill-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .drill-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    position: relative;
+  }
+
+  .drill-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .drill-badge {
+    background: var(--fairway);
+    color: var(--gold-light);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .drill-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--fairway);
+  }
+
+  .drill-steps { margin-bottom: 1rem; }
+
+  .drill-step {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.84rem;
+    color: var(--mid);
+    line-height: 1.4;
+  }
+
+  .drill-step-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--green-pale);
+    color: var(--green);
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .drill-feel-cue {
+    background: #fffdf5;
+    border-left: 3px solid var(--gold);
+    padding: 0.6rem 0.75rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.82rem;
+    color: var(--mid);
+    font-style: italic;
+  }
+
+  .drill-feel-cue strong {
+    color: var(--ink);
+    font-style: normal;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  /* Grip Diagram */
+  .grip-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 600px) { .grip-cards { grid-template-columns: 1fr; } }
+
+  .grip-card {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.2s;
+    opacity: 0.5;
+  }
+
+  .grip-card.highlighted {
+    border-color: var(--green);
+    opacity: 1;
+    box-shadow: 0 4px 16px rgba(45,106,79,0.15);
+  }
+
+  .grip-card-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    color: var(--fairway);
+    margin-bottom: 0.25rem;
+  }
+
+  .grip-card-desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .grip-card.highlighted .grip-card-desc { color: var(--mid); }
+
+  .grip-recommended {
+    display: none;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-top: 0.5rem;
+  }
+  .grip-card.highlighted .grip-recommended { display: block; }
+
+  /* Collapsible full analysis */
+  .analysis-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--mid);
+    transition: all 0.2s;
+    margin-top: 1rem;
+  }
+  .analysis-toggle:hover { border-color: var(--green-light); color: var(--green); background: var(--green-pale); }
+  .analysis-toggle-icon { transition: transform 0.3s; font-size: 0.8rem; }
+  .analysis-toggle.open .analysis-toggle-icon { transform: rotate(180deg); }
+  .analysis-collapsible { display: none; margin-top: 0.5rem; }
+  .analysis-collapsible.open { display: block; }
+
 </style>
 </head>
 <body>
@@ -684,7 +1004,65 @@
         </div>
       </div>
 
-      <div id="upload-analysis" class="ai-response" style="margin-top:1.5rem;"></div>
+      <!-- VISUAL DASHBOARD -->
+      <div id="visual-dashboard" class="visual-dashboard">
+
+        <div class="vd-section-label">📊 Your Numbers vs Target</div>
+        <div class="gauge-grid" id="gauge-grid"></div>
+
+        <div class="vd-section-label">🏹 Club Path Diagram</div>
+        <div class="path-diagram-card">
+          <div class="path-diagram-title">Swing Direction — Top View</div>
+          <div class="path-diagram-wrap">
+            <div class="path-svg-wrap">
+              <svg id="path-svg" width="160" height="160" viewBox="0 0 160 160">
+                <!-- Target line -->
+                <line x1="80" y1="10" x2="80" y2="150" stroke="#e8e4da" stroke-width="1.5" stroke-dasharray="5,3"/>
+                <text x="83" y="14" fill="#9090aa" font-size="9" font-family="DM Mono">TARGET</text>
+                <!-- Ideal path zone -->
+                <path id="ideal-zone" d="" fill="rgba(82,183,136,0.1)" />
+                <!-- Ideal path arrow -->
+                <line id="ideal-arrow-line" x1="80" y1="140" x2="80" y2="30" stroke="#52b788" stroke-width="2" stroke-dasharray="4,3"/>
+                <polygon id="ideal-arrow-head" points="80,20 75,35 85,35" fill="#52b788"/>
+                <!-- Actual path arrow -->
+                <line id="actual-arrow-line" x1="80" y1="140" x2="80" y2="30" stroke="#1b4332" stroke-width="3"/>
+                <polygon id="actual-arrow-head" points="80,20 74,36 86,36" fill="#1b4332"/>
+                <!-- Center dot -->
+                <circle cx="80" cy="140" r="5" fill="#1b4332"/>
+              </svg>
+            </div>
+            <div class="path-legend">
+              <div class="path-legend-item">
+                <div class="path-legend-dot" style="background:#1b4332"></div>
+                <div><strong>Your Path:</strong> <span id="path-actual-label">—</span></div>
+              </div>
+              <div class="path-legend-item">
+                <div class="path-legend-dot" style="background:#52b788"></div>
+                <div><strong>Ideal Target:</strong> <span id="path-ideal-label">0° to +3°</span></div>
+              </div>
+              <div style="margin-top:0.75rem; font-size:0.8rem; color:var(--muted); line-height:1.5;" id="path-explanation"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="vd-section-label">🏋️ Recommended Drill</div>
+        <div class="drill-cards-grid" id="drill-cards-grid"></div>
+
+        <div class="vd-section-label">✋ Grip Recommendation</div>
+        <div class="grip-cards" id="grip-cards"></div>
+
+      </div>
+
+      <!-- COLLAPSIBLE FULL ANALYSIS -->
+      <div id="full-analysis-wrap" style="display:none;">
+        <button class="analysis-toggle" onclick="toggleFullAnalysis(this)">
+          <span>📄 Read Full Analysis</span>
+          <span class="analysis-toggle-icon">▼</span>
+        </button>
+        <div class="analysis-collapsible">
+          <div id="upload-analysis" class="ai-response" style="margin-top:0;"></div>
+        </div>
+      </div>
 
       <div class="card" style="margin-top:1.5rem;">
         <div class="card-title">💡 How to Export from Trackman</div>
@@ -1419,6 +1797,7 @@ ${notes ? '6. **Session Notes Response** — Respond to the golfer\'s own notes 
     await saveAnalysis('CSV Session Analysis', result, `${parsedData.length} shots · ${parsedFilename}`, 'upload', parsedData.slice(0, 50), notes);
     await loadHistory();
     buildProgressSnapshot();
+    buildVisualDashboard(parsedData, handicap, goal);
   } catch(e) {
     responseEl.innerHTML = `<div style="color:#ff8080">⚠️ ${e.message || 'Error connecting. Check your setup.'}</div>`;
   }
@@ -1863,6 +2242,352 @@ async function buildProgressSnapshot() {
   document.getElementById('ps-caption').textContent =
     `Based on ${data.length} sessions · ${firstDate} → ${lastDate} · Target: neutral numbers`;
   document.getElementById('progress-snapshot').style.display = 'block';
+}
+
+
+// ─── VISUAL DASHBOARD ─────────────────────────────────────────────────────────
+
+function toggleFullAnalysis(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+  const span = btn.querySelector('span:first-child');
+  span.textContent = btn.classList.contains('open') ? '📄 Hide Full Analysis' : '📄 Read Full Analysis';
+}
+
+// Extract average value from parsed CSV data for a given column name
+function getAvgMetric(data, ...keys) {
+  for (const key of keys) {
+    const vals = data
+      .map(r => parseFloat(r[key]))
+      .filter(v => !isNaN(v));
+    if (vals.length) return vals.reduce((a, b) => a + b, 0) / vals.length;
+  }
+  return null;
+}
+
+function buildVisualDashboard(data, handicap, goal) {
+  const dashboard = document.getElementById('visual-dashboard');
+  dashboard.classList.add('visible');
+  document.getElementById('full-analysis-wrap').style.display = 'block';
+
+  // Extract averages from CSV
+  const clubPath  = getAvgMetric(data, 'Club Path (°)', 'Club Path', 'club_path', 'ClubPath');
+  const faceAngle = getAvgMetric(data, 'Face Angle (°)', 'Face Angle', 'face_angle', 'FaceAngle');
+  const f2p       = clubPath !== null && faceAngle !== null ? faceAngle - clubPath : null;
+  const smash     = getAvgMetric(data, 'Smash Factor', 'smash_factor', 'SmashFactor');
+  const attackAng = getAvgMetric(data, 'Attack Angle (°)', 'Attack Angle', 'attack_angle', 'AttackAngle');
+  const spinAxis  = getAvgMetric(data, 'Spin Axis (°)', 'Spin Axis', 'spin_axis', 'SpinAxis');
+
+  // Build gauges
+  buildGauges({ clubPath, faceAngle, f2p, smash, attackAng }, handicap, goal);
+
+  // Build path diagram
+  buildPathDiagram(clubPath, goal);
+
+  // Build drill cards
+  buildDrillCards(clubPath, faceAngle, f2p, smash, handicap, goal);
+
+  // Build grip cards
+  buildGripCards(faceAngle, spinAxis, goal);
+}
+
+// ── GAUGE BUILDER ─────────────────────────────────────────────────────────────
+function buildGauges(metrics, handicap, goal) {
+  const isDrawGoal = goal === 'draw';
+
+  const gaugeSpecs = [
+    {
+      name: 'Club Path',
+      unit: '°',
+      value: metrics.clubPath,
+      min: -12, max: 12,
+      targetMin: isDrawGoal ? 0 : -4,
+      targetMax: isDrawGoal ? 4 : 0,
+      targetLabel: isDrawGoal ? '0° to +4°' : '-4° to 0°',
+      goodMsg: '✓ In the draw zone',
+      badMsg: (v) => v < 0 ? `${Math.abs(v).toFixed(1)}° too far left` : `${v.toFixed(1)}° too far right`
+    },
+    {
+      name: 'Face Angle',
+      unit: '°',
+      value: metrics.faceAngle,
+      min: -8, max: 8,
+      targetMin: -1,
+      targetMax: 1,
+      targetLabel: '-1° to +1°',
+      goodMsg: '✓ Square at impact',
+      badMsg: (v) => v > 0 ? `${v.toFixed(1)}° open — ball starts right` : `${Math.abs(v).toFixed(1)}° closed — ball starts left`
+    },
+    {
+      name: 'Face to Path',
+      unit: '°',
+      value: metrics.f2p,
+      min: -12, max: 12,
+      targetMin: isDrawGoal ? -5 : 0,
+      targetMax: isDrawGoal ? -1 : 5,
+      targetLabel: isDrawGoal ? '-5° to -1°' : '+1° to +5°',
+      goodMsg: isDrawGoal ? '✓ Producing draw spin' : '✓ Producing fade spin',
+      badMsg: (v) => v > 0 ? `Too open — fade/slice spin` : `Too closed — draw/hook spin`
+    },
+    {
+      name: 'Smash Factor',
+      unit: '',
+      value: metrics.smash,
+      min: 1.2, max: 1.5,
+      targetMin: 1.40,
+      targetMax: 1.48,
+      targetLabel: '1.40 – 1.48',
+      goodMsg: '✓ Solid contact',
+      badMsg: (v) => v < 1.40 ? 'Off-center contact — work on strike' : 'Check your numbers'
+    },
+    {
+      name: 'Attack Angle',
+      unit: '°',
+      value: metrics.attackAng,
+      min: -10, max: 2,
+      targetMin: -6,
+      targetMax: -3,
+      targetLabel: '-6° to -3°',
+      goodMsg: '✓ Good descending blow',
+      badMsg: (v) => v > -3 ? 'Too shallow — try to hit down more' : 'Very steep — soften the angle'
+    }
+  ].filter(g => g.value !== null);
+
+  const grid = document.getElementById('gauge-grid');
+  grid.innerHTML = '';
+
+  gaugeSpecs.forEach(spec => {
+    const val = parseFloat(spec.value.toFixed(2));
+    const inRange = val >= spec.targetMin && val <= spec.targetMax;
+    const close = val >= spec.targetMin - 2 && val <= spec.targetMax + 2;
+    const colorClass = inRange ? 'green' : close ? 'yellow' : 'red';
+    const statusMsg = inRange ? spec.goodMsg : spec.badMsg(val);
+
+    // Calculate marker position (0–100%)
+    const range = spec.max - spec.min;
+    const markerPct = Math.max(2, Math.min(98, ((val - spec.min) / range) * 100));
+    const rangeLeftPct = ((spec.targetMin - spec.min) / range) * 100;
+    const rangeWidthPct = ((spec.targetMax - spec.targetMin) / range) * 100;
+
+    const card = document.createElement('div');
+    card.className = `gauge-card ${colorClass}`;
+    card.innerHTML = `
+      <div class="gauge-metric-name">${spec.name}</div>
+      <div class="gauge-values">
+        <div class="gauge-actual">${val > 0 ? '+' : ''}${val}</div>
+        <div class="gauge-unit">${spec.unit}</div>
+        <div class="gauge-target-label">Target: ${spec.targetLabel}</div>
+      </div>
+      <div class="gauge-bar-track">
+        <div class="gauge-bar-range" style="left:${rangeLeftPct}%; width:${rangeWidthPct}%"></div>
+        <div class="gauge-bar-marker" style="left:${markerPct}%"></div>
+      </div>
+      <div class="gauge-status">${statusMsg}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ── PATH DIAGRAM BUILDER ──────────────────────────────────────────────────────
+function buildPathDiagram(clubPath, goal) {
+  if (clubPath === null) return;
+
+  const isDrawGoal = goal === 'draw';
+  const idealAngle = isDrawGoal ? 2 : -2; // degrees
+  const actualAngle = parseFloat(clubPath.toFixed(1));
+
+  // Convert angle to SVG coords (positive = right of target = in-to-out)
+  function angleToCoords(degrees, length) {
+    const rad = (degrees * Math.PI) / 180;
+    return {
+      x: 80 + Math.sin(rad) * length,
+      y: 140 - Math.cos(rad) * length
+    };
+  }
+
+  const actualEnd = angleToCoords(actualAngle, 110);
+  const idealEnd = angleToCoords(idealAngle, 100);
+  const actualHead = angleToCoords(actualAngle, 120);
+  const idealHead = angleToCoords(idealAngle, 110);
+
+  // Arrow helper
+  function arrowHead(end, angle) {
+    const perpRad = ((angle + 90) * Math.PI) / 180;
+    const size = 8;
+    return `${end.x},${end.y} ${end.x - Math.cos(perpRad)*size},${end.y - Math.sin(perpRad)*size} ${end.x + Math.cos(perpRad)*size},${end.y + Math.sin(perpRad)*size}`;
+  }
+
+  document.getElementById('actual-arrow-line').setAttribute('x2', actualEnd.x);
+  document.getElementById('actual-arrow-line').setAttribute('y2', actualEnd.y);
+  document.getElementById('actual-arrow-head').setAttribute('points', arrowHead(actualHead, actualAngle));
+
+  document.getElementById('ideal-arrow-line').setAttribute('x2', idealEnd.x);
+  document.getElementById('ideal-arrow-line').setAttribute('y2', idealEnd.y);
+  document.getElementById('ideal-arrow-head').setAttribute('points', arrowHead(idealHead, idealAngle));
+
+  document.getElementById('path-actual-label').textContent =
+    `${actualAngle > 0 ? '+' : ''}${actualAngle}° (${actualAngle < 0 ? 'out-to-in' : 'in-to-out'})`;
+
+  const diff = Math.abs(actualAngle - idealAngle).toFixed(1);
+  const dir = actualAngle < idealAngle ? 'too far left (out-to-in)' : 'too far right (in-to-out)';
+  document.getElementById('path-explanation').textContent =
+    actualAngle >= (isDrawGoal ? 0 : -4) && actualAngle <= (isDrawGoal ? 4 : 0)
+      ? `Your path is in the ideal zone for a ${goal}. Keep this swing direction.`
+      : `Your path is ${diff}° ${dir} of ideal for a ${goal}. The green arrow shows where to aim.`;
+}
+
+// ── DRILL CARD BUILDER ────────────────────────────────────────────────────────
+function buildDrillCards(clubPath, faceAngle, f2p, smash, handicap, goal) {
+  const drills = [];
+  const isDrawGoal = goal === 'draw';
+
+  if (clubPath !== null && clubPath < -1) {
+    drills.push({
+      badge: 'PATH',
+      name: 'Alignment Stick Drill',
+      steps: [
+        'Place an alignment stick in the ground just outside the ball, angled toward your target.',
+        "On your downswing, feel like you're swinging the club under and past the stick.",
+        'Hit 20 balls focusing on the club traveling from inside to outside the target line.'
+      ],
+      feel: "Feel like you're swinging out to right field (for right-handers) — more than you think you need to.",
+    });
+  }
+
+  if (faceAngle !== null && faceAngle > 1) {
+    drills.push({
+      badge: 'FACE',
+      name: 'Towel Under Lead Arm',
+      steps: [
+        'Tuck a small towel under your lead armpit (left arm for right-handers).',
+        'Make swings keeping the towel in place through impact.',
+        'This promotes body rotation which closes the face naturally.'
+      ],
+      feel: 'Feel the face rotate to point at the ground just after impact — like closing a door.'
+    });
+  }
+
+  if (smash !== null && smash < 1.40) {
+    drills.push({
+      badge: 'CONTACT',
+      name: 'Tee Strike Drill',
+      steps: [
+        'Push a tee into the ground just forward of center in your stance.',
+        'Hit shots trying to clip the tee after the ball.',
+        "If you hit the tee before the ball, you're hitting behind it — adjust forward.",
+      ],
+      feel: "Hear a crisp click on the ball then see the tee fly forward — that's a centered strike.",
+    });
+  }
+
+  if (!drills.length) {
+    drills.push({
+      badge: 'CONSISTENCY',
+      name: 'Tempo Drill — 3:1 Ratio',
+      steps: [
+        'Count "1-2-3" on your backswing, "1" on your downswing.',
+        'Hit 15 balls with this slow tempo, focusing on smooth transition.',
+        'Gradually speed up while keeping the same ratio.'
+      ],
+      feel: "The downswing should feel almost passive — let the club fall, don't force it.",
+    });
+  }
+
+  const grid = document.getElementById('drill-cards-grid');
+  grid.innerHTML = drills.map(d => `
+    <div class="drill-card">
+      <div class="drill-card-header">
+        <div class="drill-badge">${d.badge}</div>
+        <div class="drill-name">${d.name}</div>
+      </div>
+      <div class="drill-steps">
+        ${d.steps.map((s, i) => `
+          <div class="drill-step">
+            <div class="drill-step-num">${i + 1}</div>
+            <div>${s}</div>
+          </div>`).join('')}
+      </div>
+      <div class="drill-feel-cue">
+        <strong>Feel Cue</strong>
+        ${d.feel}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── GRIP BUILDER ──────────────────────────────────────────────────────────────
+function buildGripCards(faceAngle, spinAxis, goal) {
+  const grips = [
+    {
+      type: 'strong',
+      name: 'Strong Grip',
+      desc: "V's point to right shoulder. Naturally closes the face — promotes draw/hook.",
+      svgPath: buildGripSVG('strong'),
+      goodFor: ['draw']
+    },
+    {
+      type: 'neutral',
+      name: 'Neutral Grip',
+      desc: "V's point to chin. Standard for most shots — square face at impact.",
+      svgPath: buildGripSVG('neutral'),
+      goodFor: ['straight', 'draw', 'fade']
+    },
+    {
+      type: 'weak',
+      name: 'Weak Grip',
+      desc: "V's point to left shoulder. Naturally opens the face — promotes fade/slice.",
+      svgPath: buildGripSVG('weak'),
+      goodFor: ['fade']
+    }
+  ];
+
+  // Determine recommendation
+  let recommended = 'neutral';
+  if (faceAngle !== null) {
+    if (faceAngle > 2) recommended = 'strong';       // open face → stronger grip
+    else if (faceAngle < -2) recommended = 'weak';   // closed face → weaker grip
+    else if (goal === 'draw') recommended = 'strong';
+    else if (goal === 'fade') recommended = 'neutral';
+  } else if (goal === 'draw') recommended = 'strong';
+
+  const container = document.getElementById('grip-cards');
+  container.innerHTML = grips.map(g => `
+    <div class="grip-card ${g.type === recommended ? 'highlighted' : ''}">
+      ${g.svgPath}
+      <div class="grip-card-name">${g.name}</div>
+      <div class="grip-card-desc">${g.desc}</div>
+      <div class="grip-recommended">★ Recommended for you</div>
+    </div>
+  `).join('');
+}
+
+function buildGripSVG(type) {
+  const colors = { strong: '#2d6a4f', neutral: '#4a4a6a', weak: '#457b9d' };
+  const color = colors[type];
+
+  // Simple SVG hand grip illustration
+  const rotation = type === 'strong' ? 15 : type === 'weak' ? -15 : 0;
+
+  return `<svg width="80" height="90" viewBox="0 0 80 90" style="margin:0 auto 0.75rem; display:block;">
+    <!-- Club grip -->
+    <rect x="36" y="5" width="8" height="60" rx="4" fill="#c9a96e"/>
+    <!-- Hand -->
+    <g transform="rotate(${rotation}, 40, 55)">
+      <rect x="20" y="40" width="40" height="35" rx="8" fill="${color}" opacity="0.9"/>
+      <!-- Fingers -->
+      <rect x="20" y="32" width="8" height="18" rx="4" fill="${color}"/>
+      <rect x="30" y="28" width="8" height="20" rx="4" fill="${color}"/>
+      <rect x="40" y="28" width="8" height="20" rx="4" fill="${color}"/>
+      <rect x="50" y="30" width="8" height="18" rx="4" fill="${color}"/>
+      <!-- Knuckle dots -->
+      <circle cx="24" cy="34" r="2" fill="rgba(255,255,255,0.3)"/>
+      <circle cx="34" cy="30" r="2" fill="rgba(255,255,255,0.3)"/>
+      <circle cx="44" cy="30" r="2" fill="rgba(255,255,255,0.3)"/>
+      <circle cx="54" cy="32" r="2" fill="rgba(255,255,255,0.3)"/>
+    </g>
+    <!-- V indicator -->
+    <text x="40" y="88" text-anchor="middle" font-size="8" fill="${color}" font-family="DM Mono" font-weight="bold">V→${type === 'strong' ? 'R.SHOULDER' : type === 'weak' ? 'L.SHOULDER' : 'CHIN'}</text>
+  </svg>`;
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
