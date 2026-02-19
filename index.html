@@ -6,7 +6,27 @@
 <title>Caddie IQ — Golf Performance Coach</title>
 
 <!-- Supabase JS client -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  window.supabase = { createClient };
+</script>
+<script>
+function initApp() {
+  // Wait for ESM to load before running app
+  document.addEventListener('DOMContentLoaded', function() {
+    let attempts = 0;
+    const wait = setInterval(() => {
+      attempts++;
+      if (window.supabase && window.supabase.createClient) {
+        clearInterval(wait);
+        initApp();
+      } else if (attempts > 50) {
+        clearInterval(wait);
+        document.getElementById('auth-screen').innerHTML += '<p style="color:red;text-align:center">Failed to load. Please disable tracking prevention for this site.</p>';
+      }
+    }, 100);
+  });
+</script>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
@@ -1456,6 +1476,7 @@
 </div>
 
 <script>
+function initApp() {
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 // ⚠️  REPLACE THESE with your actual Supabase project values
 // Find them at: supabase.com → your project → Settings → API
@@ -2780,6 +2801,8 @@ function buildRealisticGripSVG(type, knuckles, color) {
   </svg>`;
 }
 
+initAuth();
+} // end initApp
 </script>
 </body>
 </html>
