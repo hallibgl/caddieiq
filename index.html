@@ -1777,20 +1777,35 @@ ${notes ? '6. **Session Notes Response** — Respond to the golfer\'s own notes 
   try {
     const result = await askClaude(prompt);
 
-    // Extract plain english JSON
-    const peMatch = result.match(/\{[^}]*"problem"[^}]*\}/);
-    if (peMatch) {
+    // Extract plain english JSON - handles ```json blocks and raw JSON
+    let pe = null;
+    try {
+      // Try ```json block first
+      const codeMatch = result.match(/```json\s*([\s\S]*?)```/);
+      if (codeMatch) pe = JSON.parse(codeMatch[1].trim());
+    } catch(e) {}
+    if (!pe) {
       try {
-        const pe = JSON.parse(peMatch[0]);
-        document.getElementById('pe-problem-upload').textContent = pe.problem || '—';
-        document.getElementById('pe-fix-upload').textContent = pe.fix || '—';
-        document.getElementById('pe-watch-upload').textContent = pe.watch || '—';
-        document.getElementById('pe-card-upload').style.display = 'block';
+        // Try raw JSON object with "problem" key
+        const rawMatch = result.match(/\{[\s\S]*?"problem"[\s\S]*?"fix"[\s\S]*?"watch"[\s\S]*?\}/);
+        if (rawMatch) pe = JSON.parse(rawMatch[0]);
       } catch(e) {}
     }
+    if (pe) {
+      document.getElementById('pe-problem-upload').textContent = pe.problem || '—';
+      document.getElementById('pe-fix-upload').textContent = pe.fix || '—';
+      document.getElementById('pe-watch-upload').textContent = pe.watch || '—';
+      document.getElementById('pe-card-upload').style.display = 'block';
+    }
 
-    // Strip the JSON from the displayed analysis
-    const cleanResult = result.replace(/PLAIN_ENGLISH_JSON[\s\S]*?\{[^}]*\}/, '').trim();
+    // Strip ALL json blocks and PLAIN_ENGLISH_JSON label from displayed text
+    let cleanResult = result
+      .replace(/PLAIN_ENGLISH_JSON[\s\S]*?```json[\s\S]*?```/, '')
+      .replace(/```json[\s\S]*?```/g, '')
+      .replace(/PLAIN_ENGLISH_JSON/g, '')
+      .replace(/^\s*\{[\s\S]*?"problem"[\s\S]*?"watch"[\s\S]*?\}\s*/m, '')
+      .replace(/^\s*~{2,}\s*/gm, '')
+      .trim();
     responseEl.innerHTML = '<div class="ai-label">FULL ANALYSIS</div><div class="ai-body"></div>';
     streamToElement(responseEl.querySelector('.ai-body'), cleanResult);
 
@@ -1871,18 +1886,30 @@ Then the full diagnosis:
     const result = await askClaude(prompt);
 
     // Extract plain english JSON
-    const peMatch = result.match(/\{[^}]*"problem"[^}]*\}/);
-    if (peMatch) {
+    let peShotData = null;
+    try {
+      const codeMatch = result.match(/```json\s*([\s\S]*?)```/);
+      if (codeMatch) peShotData = JSON.parse(codeMatch[1].trim());
+    } catch(e) {}
+    if (!peShotData) {
       try {
-        const pe = JSON.parse(peMatch[0]);
-        document.getElementById('pe-problem-shot').textContent = pe.problem || '—';
-        document.getElementById('pe-fix-shot').textContent = pe.fix || '—';
-        document.getElementById('pe-watch-shot').textContent = pe.watch || '—';
-        document.getElementById('pe-card-shot').style.display = 'block';
+        const rawMatch = result.match(/\{[\s\S]*?"problem"[\s\S]*?"fix"[\s\S]*?"watch"[\s\S]*?\}/);
+        if (rawMatch) peShotData = JSON.parse(rawMatch[0]);
       } catch(e) {}
     }
+    if (peShotData) {
+      document.getElementById('pe-problem-shot').textContent = peShotData.problem || '—';
+      document.getElementById('pe-fix-shot').textContent = peShotData.fix || '—';
+      document.getElementById('pe-watch-shot').textContent = peShotData.watch || '—';
+      document.getElementById('pe-card-shot').style.display = 'block';
+    }
 
-    const cleanResult = result.replace(/PLAIN_ENGLISH_JSON[\s\S]*?\{[^}]*\}/, '').trim();
+    let cleanResult = result
+      .replace(/PLAIN_ENGLISH_JSON[\s\S]*?```json[\s\S]*?```/, '')
+      .replace(/```json[\s\S]*?```/g, '')
+      .replace(/PLAIN_ENGLISH_JSON/g, '')
+      .replace(/^\s*\{[\s\S]*?"problem"[\s\S]*?"watch"[\s\S]*?\}\s*/m, '')
+      .trim();
     responseEl.innerHTML = '<div class="ai-label">DIAGNOSIS COMPLETE</div><div class="ai-body"></div>';
     streamToElement(responseEl.querySelector('.ai-body'), cleanResult);
     updateShotViz();
@@ -2256,11 +2283,20 @@ function toggleFullAnalysis(btn) {
 
 // Extract average value from parsed CSV data for a given column name
 function getAvgMetric(data, ...keys) {
+  // Try exact keys first, then case-insensitive match
   for (const key of keys) {
-    const vals = data
-      .map(r => parseFloat(r[key]))
-      .filter(v => !isNaN(v));
+    const vals = data.map(r => parseFloat(r[key])).filter(v => !isNaN(v));
     if (vals.length) return vals.reduce((a, b) => a + b, 0) / vals.length;
+  }
+  // Fallback: case-insensitive partial match on any column
+  for (const key of keys) {
+    const lk = key.toLowerCase().replace(/[^a-z]/g, '');
+    const allKeys = data.length ? Object.keys(data[0]) : [];
+    const match = allKeys.find(k => k.toLowerCase().replace(/[^a-z]/g, '') === lk);
+    if (match) {
+      const vals = data.map(r => parseFloat(r[match])).filter(v => !isNaN(v));
+      if (vals.length) return vals.reduce((a, b) => a + b, 0) / vals.length;
+    }
   }
   return null;
 }
@@ -2271,12 +2307,16 @@ function buildVisualDashboard(data, handicap, goal) {
   document.getElementById('full-analysis-wrap').style.display = 'block';
 
   // Extract averages from CSV
-  const clubPath  = getAvgMetric(data, 'Club Path (°)', 'Club Path', 'club_path', 'ClubPath');
-  const faceAngle = getAvgMetric(data, 'Face Angle (°)', 'Face Angle', 'face_angle', 'FaceAngle');
+  const clubPath  = getAvgMetric(data, 'Club Path', 'Club Path (°)', 'club_path', 'ClubPath', 'clubpath');
+  const faceAngle = getAvgMetric(data, 'Face Angle', 'Face Angle (°)', 'face_angle', 'FaceAngle', 'faceangle');
   const f2p       = clubPath !== null && faceAngle !== null ? faceAngle - clubPath : null;
-  const smash     = getAvgMetric(data, 'Smash Factor', 'smash_factor', 'SmashFactor');
-  const attackAng = getAvgMetric(data, 'Attack Angle (°)', 'Attack Angle', 'attack_angle', 'AttackAngle');
-  const spinAxis  = getAvgMetric(data, 'Spin Axis (°)', 'Spin Axis', 'spin_axis', 'SpinAxis');
+  const smash     = getAvgMetric(data, 'Smash Factor', 'smash_factor', 'SmashFactor', 'smashfactor');
+  const attackAng = getAvgMetric(data, 'Attack Angle', 'Attack Angle (°)', 'attack_angle', 'AttackAngle', 'attackangle');
+  const spinAxis  = getAvgMetric(data, 'Spin Axis', 'Spin Axis (°)', 'spin_axis', 'SpinAxis', 'spinaxis');
+
+  // Debug: log what we found
+  console.log('Caddie IQ metrics:', { clubPath, faceAngle, f2p, smash, attackAng, spinAxis });
+  console.log('CSV columns:', data.length ? Object.keys(data[0]) : 'no data');
 
   // Build gauges
   buildGauges({ clubPath, faceAngle, f2p, smash, attackAng }, handicap, goal);
