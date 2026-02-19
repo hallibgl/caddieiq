@@ -1905,14 +1905,19 @@ async function analyzeUploadedData() {
   const btn = document.getElementById('analyze-btn');
   btn.disabled = true; btn.textContent = '⏳ Analyzing...';
 
-  const responseEl = document.getElementById('upload-analysis');
-  responseEl.className = 'ai-response visible';
-  responseEl.innerHTML = '<div class="ai-label">CADDIE IQ ANALYZING</div><div class="loading"><div class="spinner"></div>Reading your Trackman data...</div>';
-
-  const sample = parsedData.slice(0, 10).map(r => JSON.stringify(r)).join('\n');
   const handicap = userProfile.handicap || '15-24';
   const goal = userProfile.goal || 'draw';
   const notes = document.getElementById('session-notes')?.value?.trim() || '';
+
+  // Build visuals immediately from CSV data — no need to wait for AI
+  buildVisualDashboard(parsedData, handicap, goal);
+  buildProgressSnapshot();
+
+  const responseEl = document.getElementById('upload-analysis');
+  responseEl.className = 'ai-response visible';
+  responseEl.innerHTML = '<div class="ai-label">CADDIE IQ ANALYZING</div><div class="loading"><div class="spinner"></div>Building your AI analysis...</div>';
+
+  const sample = parsedData.slice(0, 10).map(r => JSON.stringify(r)).join('\n');
 
   const prompt = `Analyze this Trackman golf session data for a ${handicap} handicap golfer whose goal is to hit a ${goal}.
 ${notes ? `Golfer's own notes from this session: "${notes}"` : ''}
@@ -1971,13 +1976,11 @@ ${notes ? '6. **Session Notes Response** — Respond to the golfer\'s own notes 
 
     await saveAnalysis('CSV Session Analysis', result, `${parsedData.length} shots · ${parsedFilename}`, 'upload', parsedData.slice(0, 50), notes);
     await loadHistory();
-    buildProgressSnapshot();
-    buildVisualDashboard(parsedData, handicap, goal);
   } catch(e) {
     responseEl.innerHTML = `<div style="color:#ff8080">⚠️ ${e.message || 'Error connecting. Check your setup.'}</div>`;
   }
 
-  btn.disabled = false; btn.textContent = '🤖 Analyze with AI Caddie';
+  btn.disabled = false; btn.textContent = '🤖 Analyze Again';
 }
 
 // ─── SHOT ANALYZER ────────────────────────────────────────────────────────────
