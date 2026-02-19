@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caddie IQ — Golf Performance Coach</title>
+
+<!-- Supabase JS client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --green: #2d6a4f;
+    --green-light: #52b788;
+    --green-pale: #d8f3dc;
+    --fairway: #1b4332;
+    --gold: #f4a261;
+    --gold-light: #ffd166;
+    --cream: #faf7f0;
+    --ink: #1a1a2e;
+    --mid: #4a4a6a;
+    --muted: #9090aa;
+    --danger: #e63946;
+    --card: #ffffff;
+    --border: #e8e4da;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+
+  /* ── AUTH SCREEN ─────────────────────────── */
+  #auth-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fairway);
+    padding: 1.5rem;
+  }
+
+  .auth-box {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+
+  .auth-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    color: var(--fairway);
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 0.25rem;
+  }
+
+  .auth-logo span { color: var(--green-light); }
+  .auth-tagline { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
+
+  .auth-tabs { display: flex; background: var(--cream); border-radius: 8px; padding: 4px; margin-bottom: 1.75rem; }
+  .auth-tab {
+    flex: 1; padding: 0.6rem; text-align: center; border: none;
+    background: none; border-radius: 6px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.88rem;
+    color: var(--muted); transition: all 0.2s;
+  }
+  .auth-tab.active { background: white; color: var(--fairway); box-shadow: 0 1px 6px rgba(0,0,0,0.1); }
+
+  .auth-form { display: flex; flex-direction: column; gap: 0.75rem; }
+  .auth-form input {
+    width: 100%; padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    transition: border-color 0.2s;
+  }
+  .auth-form input:focus { outline: none; border-color: var(--green-light); }
+
+  .auth-btn {
+    width: 100%; padding: 0.85rem;
+    background: var(--fairway); color: white; border: none;
+    border-radius: 8px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; margin-top: 0.5rem;
+  }
+  .auth-btn:hover { background: var(--green); }
+  .auth-btn:disabled { background: var(--muted); cursor: not-allowed; }
+
+  .auth-error {
+    background: #ffeaec; border: 1px solid #ffb3ba; color: var(--danger);
+    border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.83rem; display: none;
+  }
+  .auth-success {
+    background: var(--green-pale); border: 1px solid #95d5b2; color: var(--green);
+    border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.83rem; display: none;
+  }
+
+  /* ── APP SHELL ───────────────────────────── */
+  #app-shell { display: none; }
+
+  header {
+    background: var(--fairway); padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--gold-light); letter-spacing: 2px; }
+  .logo span { color: var(--green-light); }
+
+  nav { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+  nav button {
+    background: none; border: none; color: rgba(255,255,255,0.6);
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    padding: 0.5rem 0.85rem; border-radius: 6px; cursor: pointer; transition: all 0.2s;
+  }
+  nav button:hover { background: rgba(255,255,255,0.1); color: white; }
+  nav button.active { background: var(--green); color: var(--gold-light); }
+
+  .header-user {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.8rem; color: rgba(255,255,255,0.6);
+  }
+
+  .signout-btn {
+    background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.7);
+    padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer;
+    font-size: 0.78rem; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .signout-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* ── PANELS ─────────────────────────────── */
+  .panel { display: none; animation: fadeIn 0.3s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--fairway); letter-spacing: 1px; margin-bottom: 0.25rem; }
+  .section-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  /* ── CARDS ──────────────────────────────── */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 1px; color: var(--green); margin-bottom: 1rem; }
+
+  /* ── STATS ──────────────────────────────── */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat-box { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; }
+  .stat-box .sb-val { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--fairway); line-height: 1; }
+  .stat-box .sb-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── FORM ELEMENTS ──────────────────────── */
+  label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--mid); margin-bottom: 0.4rem; letter-spacing: 0.3px; }
+  input[type="number"], input[type="text"], select, textarea {
+    width: 100%; padding: 0.65rem 0.85rem;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: 'DM Mono', monospace; font-size: 0.88rem; color: var(--ink);
+    background: white; transition: border-color 0.2s; margin-bottom: 1rem;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--green-light); }
+
+  /* ── BUTTONS ────────────────────────────── */
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 8px; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--green); color: white; }
+  .btn-primary:hover { background: var(--fairway); transform: translateY(-1px); }
+  .btn-primary:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+  .btn-outline { background: white; color: var(--green); border: 2px solid var(--green); }
+  .btn-outline:hover { background: var(--green-pale); }
+
+  /* ── AI RESPONSE ────────────────────────── */
+  .ai-response { background: var(--fairway); border-radius: 12px; padding: 1.75rem; color: white; display: none; position: relative; overflow: hidden; }
+  .ai-response::before { content: '⛳'; position: absolute; right: 1.5rem; top: 1.5rem; font-size: 2rem; opacity: 0.15; }
+  .ai-response.visible { display: block; animation: fadeIn 0.4s ease; }
+  .ai-label { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--gold-light); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .ai-label::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--green-light); animation: pulse 1.5s infinite; display: inline-block; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .ai-body { font-size: 0.92rem; line-height: 1.75; color: rgba(255,255,255,0.9); white-space: pre-wrap; }
+  .ai-body strong { color: var(--gold-light); font-weight: 600; }
+
+  /* ── LOADING ────────────────────────────── */
+  .loading { display: flex; align-items: center; gap: 0.75rem; color: var(--green-light); font-size: 0.88rem; }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(82,183,136,0.3); border-top-color: var(--green-light); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── UPLOAD ─────────────────────────────── */
+  .upload-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 3rem 2rem; text-align: center; cursor: pointer; transition: all 0.2s; background: white; }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--green-light); background: var(--green-pale); }
+  .upload-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .upload-zone h3 { font-size: 1.1rem; color: var(--fairway); margin-bottom: 0.5rem; }
+  .upload-zone p { font-size: 0.85rem; color: var(--muted); }
+  #file-input { display: none; }
+  .data-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; font-family: 'DM Mono', monospace; }
+  th { background: var(--fairway); color: var(--green-light); padding: 0.6rem 0.75rem; text-align: left; font-size: 0.72rem; letter-spacing: 0.5px; white-space: nowrap; }
+  td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); color: var(--ink); white-space: nowrap; }
+  tr:hover td { background: var(--green-pale); }
+
+  /* ── ANALYZER ───────────────────────────── */
+  .analyzer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 700px) { .analyzer-grid { grid-template-columns: 1fr; } nav { display: none; } }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+  /* ── SHOT VIZ ───────────────────────────── */
+  .shot-viz { background: #0a2e1a; border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden; min-height: 160px; display: flex; align-items: center; justify-content: center; }
+
+  /* ── ROADMAP ────────────────────────────── */
+  .handicap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .hc-card { border: 2px solid var(--border); border-radius: 10px; padding: 1.25rem; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .hc-card:hover { border-color: var(--green-light); transform: translateY(-2px); }
+  .hc-card.selected { border-color: var(--green); background: var(--green-pale); }
+  .hc-card .hc-range { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--fairway); }
+  .hc-card .hc-label { font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; }
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+  .metric-pill { background: var(--fairway); color: white; border-radius: 8px; padding: 1rem; }
+  .metric-pill .mp-label { font-size: 0.75rem; color: var(--green-light); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .metric-pill .mp-name { font-size: 1rem; font-weight: 600; margin: 0.4rem 0 0.3rem; }
+  .metric-pill .mp-desc { font-size: 0.78rem; color: rgba(255,255,255,0.6); line-height: 1.4; }
+  .metric-pill .mp-priority { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--gold-light); margin-top: 0.5rem; }
+
+  /* ── HISTORY ────────────────────────────── */
+  .history-item { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; }
+  .history-item:hover { border-color: var(--green-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .history-item .hi-date { font-size: 0.75rem; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .history-item .hi-title { font-weight: 600; color: var(--fairway); margin: 0.3rem 0; }
+  .history-item .hi-preview { font-size: 0.82rem; color: var(--mid); line-height: 1.5; }
+
+  .empty-state { text-align: center; padding: 3rem; color: var(--muted); }
+  .empty-state .es-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+
+  .db-badge {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--green-pale); color: var(--green);
+    border-radius: 20px; padding: 0.25rem 0.75rem;
+    font-size: 0.72rem; font-weight: 600;
+  }
+  .db-badge::before { content: '●'; font-size: 0.6rem; }
+</style>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ─────────────────────────────────── -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">Caddie <span>IQ</span></div>
+    <div class="auth-tagline">Turn your Trackman data into real improvement</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <div id="auth-error" class="auth-error"></div>
+    <div id="auth-success" class="auth-success"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="login-form" class="auth-form">
+      <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email">
+      <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+      <button class="auth-btn" onclick="signIn()" id="login-btn">Sign In</button>
+      <div style="text-align:center; font-size:0.8rem; color:var(--muted); margin-top:0.5rem;">
+        <a href="#" onclick="resetPassword()" style="color:var(--green); text-decoration:none;">Forgot password?</a>
+      </div>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signup-form" class="auth-form" style="display:none;">
+      <input type="email" id="signup-email" placeholder="you@email.com" autocomplete="email">
+      <input type="password" id="signup-password" placeholder="Password (min 6 chars)" autocomplete="new-password">
+      <button class="auth-btn" onclick="signUp()" id="signup-btn">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── APP SHELL ────────────────────────────────────── -->
+<div id="app-shell">
+  <header>
+    <div class="logo">Caddie <span>IQ</span></div>
+    <nav>
+      <button class="active" onclick="showPanel('dashboard')">Dashboard</button>
+      <button onclick="showPanel('upload')">Upload Data</button>
+      <button onclick="showPanel('analyzer')">Shot Analyzer</button>
+      <button onclick="showPanel('roadmap')">Improvement</button>
+      <button onclick="showPanel('history')">History</button>
+    </nav>
+    <div class="header-user">
+      <span id="user-email-display" style="display:none;"></span>
+      <button class="signout-btn" onclick="signOut()">Sign Out</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- DASHBOARD -->
+    <div id="panel-dashboard" class="panel active">
+      <div class="section-title">Welcome Back</div>
+      <p class="section-sub">Your AI-powered caddie — turning Trackman data into real improvement. <span class="db-badge">Cloud Synced</span></p>
+
+      <div class="stats-row">
+        <div class="stat-box"><div class="sb-val" id="stat-sessions">0</div><div class="sb-label">Sessions</div></div>
+        <div class="stat-box"><div class="sb-val" id="stat-shots">0</div><div class="sb-label">Shots Logged</div></div>
+        <div class="stat-box"><div class="sb-val" id="stat-handicap">—</div><div class="sb-label">Handicap</div></div>
+        <div class="stat-box"><div class="sb-val" id="stat-analyses">0</div><div class="sb-label">Analyses</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚙️ Your Profile</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div>
+            <label>Your Handicap</label>
+            <select id="profile-handicap" onchange="saveProfile()">
+              <option value="">Select...</option>
+              <option value="25+">25+ (Beginner)</option>
+              <option value="15-24">15–24 (Mid)</option>
+              <option value="5-14">5–14 (Low-Mid)</option>
+              <option value="0-4">0–4 (Scratch)</option>
+            </select>
+          </div>
+          <div>
+            <label>Primary Shot Goal</label>
+            <select id="profile-goal" onchange="saveProfile()">
+              <option value="">Select...</option>
+              <option value="draw">Play a Draw</option>
+              <option value="fade">Play a Fade</option>
+              <option value="straight">Hit it Straight</option>
+              <option value="distance">Add Distance</option>
+              <option value="consistency">Improve Consistency</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="recent-analyses-wrap">
+        <div class="card-title" style="font-family:'Bebas Neue'; font-size:1.1rem; letter-spacing:1px; color:var(--green); margin-bottom:1rem;">📋 Recent Analyses</div>
+        <div class="empty-state">
+          <div class="es-icon">🏌️</div>
+          <p>No analyses yet. Upload Trackman data or use the Shot Analyzer to get started.</p>
+          <br>
+          <button class="btn btn-primary" onclick="showPanel('upload')">Upload Data →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div id="panel-upload" class="panel">
+      <div class="section-title">Upload Trackman Data</div>
+      <p class="section-sub">Drop your CSV export from Trackman, FlightScope, or any golf launch monitor.</p>
+
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()"
+        ondragover="event.preventDefault(); this.classList.add('dragover')"
+        ondragleave="this.classList.remove('dragover')"
+        ondrop="handleDrop(event)">
+        <div class="upload-icon">📂</div>
+        <h3>Drop your CSV here or click to browse</h3>
+        <p>Supports Trackman (.csv), FlightScope (.csv), or any standard golf launch monitor export</p>
+      </div>
+      <input type="file" id="file-input" accept=".csv,.txt" onchange="handleFileSelect(event)">
+
+      <div id="parse-status" style="margin-top:1rem;"></div>
+
+      <div id="data-preview" style="display:none;">
+        <div class="card">
+          <div class="card-title">📊 Parsed Shot Data</div>
+          <div class="data-table-wrap" id="table-container"></div>
+          <br>
+          <button class="btn btn-primary" onclick="analyzeUploadedData()" id="analyze-btn">🤖 Analyze with AI Caddie</button>
+        </div>
+      </div>
+
+      <div id="upload-analysis" class="ai-response" style="margin-top:1.5rem;"></div>
+
+      <div class="card" style="margin-top:1.5rem;">
+        <div class="card-title">💡 How to Export from Trackman</div>
+        <p style="font-size:0.85rem; color:var(--mid); line-height:1.7;">
+          In the Trackman app → <strong>My Sessions</strong> → select your session → tap <strong>Share/Export</strong> → choose <strong>CSV</strong>.
+          The file will include Club Speed, Ball Speed, Launch Angle, Spin Rate, Carry Distance, Club Path, Face Angle, Attack Angle, Spin Axis, and more.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🧪 Try a Demo Dataset</div>
+        <p style="font-size:0.85rem; color:var(--mid); margin-bottom:1rem;">Don't have a CSV? Load a sample 7-iron session showing a classic fade pattern.</p>
+        <button class="btn btn-outline" onclick="loadDemoData()">Load Demo Data</button>
+      </div>
+    </div>
+
+    <!-- SHOT ANALYZER -->
+    <div id="panel-analyzer" class="panel">
+      <div class="section-title">Shot Analyzer</div>
+      <p class="section-sub">Enter any Trackman numbers to diagnose exactly what your ball is doing and why.</p>
+
+      <div class="analyzer-grid">
+        <div>
+          <div class="card">
+            <div class="card-title">🎯 Shot Parameters</div>
+
+            <label>Club</label>
+            <select id="a-club">
+              <option>Driver</option><option>3 Wood</option><option>5 Wood</option>
+              <option>4 Iron</option><option>5 Iron</option><option>6 Iron</option>
+              <option selected>7 Iron</option><option>8 Iron</option><option>9 Iron</option>
+              <option>PW</option><option>GW</option><option>SW</option><option>LW</option>
+            </select>
+
+            <label>Desired Shot Shape</label>
+            <select id="a-shape">
+              <option value="draw">Draw</option>
+              <option value="fade">Fade</option>
+              <option value="straight">Straight</option>
+            </select>
+
+            <hr class="divider">
+
+            <label>Club Path (°) <span style="color:var(--muted); font-weight:400">— + is In-to-Out, − is Out-to-In</span></label>
+            <input type="number" id="a-path" placeholder="-3.2" step="0.1">
+
+            <label>Face Angle (°) <span style="color:var(--muted); font-weight:400">— + is Open, − is Closed</span></label>
+            <input type="number" id="a-face" placeholder="+1.5" step="0.1">
+
+            <label>Attack Angle (°)</label>
+            <input type="number" id="a-attack" placeholder="-4.0" step="0.1">
+
+            <label>Spin Rate (rpm)</label>
+            <input type="number" id="a-spin" placeholder="6800">
+
+            <label>Spin Axis (°) <span style="color:var(--muted); font-weight:400">— + tilts right (fade), − tilts left (draw)</span></label>
+            <input type="number" id="a-spinaxis" placeholder="+8" step="0.1">
+
+            <label>Ball Speed (mph)</label>
+            <input type="number" id="a-ballspeed" placeholder="118">
+
+            <label>Club Speed (mph)</label>
+            <input type="number" id="a-clubspeed" placeholder="82">
+
+            <button class="btn btn-primary" onclick="runShotAnalysis()" id="shot-btn" style="width:100%">
+              🤖 Analyze My Shot
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-title">📐 Ball Flight Visualizer</div>
+            <div class="shot-viz" id="shot-viz">
+              <svg width="220" height="120" viewBox="0 0 220 120">
+                <line x1="110" y1="10" x2="110" y2="110" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="4"/>
+                <text x="90" y="118" fill="rgba(255,255,255,0.3)" font-size="9">TARGET LINE</text>
+                <path id="shot-svg-path" d="M110,110 Q110,60 110,15" stroke="rgba(82,183,136,0.4)" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+              <div style="position:absolute; bottom:0.75rem; left:50%; transform:translateX(-50%); font-size:0.72rem; color:rgba(255,255,255,0.35); font-family:'DM Mono'; white-space:nowrap;">
+                Updates live as you type
+              </div>
+            </div>
+          </div>
+
+          <div id="shot-analysis" class="ai-response"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div id="panel-roadmap" class="panel">
+      <div class="section-title">Improvement Roadmap</div>
+      <p class="section-sub">Personalized focus areas based on your handicap. Tap a level to see your priority metrics.</p>
+
+      <div class="handicap-grid">
+        <div class="hc-card" onclick="selectHandicap(this, '25+')">
+          <div class="hc-range">25+</div><div class="hc-label">Beginner</div>
+        </div>
+        <div class="hc-card selected" onclick="selectHandicap(this, '15-24')">
+          <div class="hc-range">15–24</div><div class="hc-label">Mid Handicap</div>
+        </div>
+        <div class="hc-card" onclick="selectHandicap(this, '5-14')">
+          <div class="hc-range">5–14</div><div class="hc-label">Low-Mid</div>
+        </div>
+        <div class="hc-card" onclick="selectHandicap(this, '0-4')">
+          <div class="hc-range">0–4</div><div class="hc-label">Scratch</div>
+        </div>
+      </div>
+
+      <div id="roadmap-content"></div>
+
+      <div class="card" style="margin-top:1.5rem;">
+        <div class="card-title">🤖 Ask Your Caddie</div>
+        <label>What are you struggling with?</label>
+        <textarea id="roadmap-question" rows="3" placeholder="e.g. I keep pulling my 7 iron left and losing distance. My club path is -4 and face is +2..."></textarea>
+        <button class="btn btn-primary" onclick="getRoadmapAdvice()">Get Advice</button>
+      </div>
+
+      <div id="roadmap-advice" class="ai-response" style="margin-top:1.5rem;"></div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="panel-history" class="panel">
+      <div class="section-title">Session History</div>
+      <p class="section-sub">All analyses saved to your account — synced across every device. <span class="db-badge">Cloud Synced</span></p>
+
+      <div id="history-list">
+        <div class="empty-state"><div class="es-icon">📂</div><p>Loading your history...</p></div>
+      </div>
+
+      <div style="margin-top:1.5rem; text-align:right;">
+        <button class="btn btn-outline" onclick="exportHistory()">📥 Export JSON</button>
+        <button class="btn" style="background:#fff0f0; color:var(--danger); margin-left:0.5rem;" onclick="clearHistory()">🗑 Clear All</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+// ⚠️  REPLACE THESE with your actual Supabase project values
+// Find them at: supabase.com → your project → Settings → API
+const SUPABASE_URL = 'https://lcedamercezvwpombihf.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjZWRhbWVyY2V6dndwb21iaWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0NjE2MzUsImV4cCI6MjA4NzAzNzYzNX0.r0m6f4ycWDlWEfMPGn5HV0ZL7Rs9G3kKuHy5iI1bngU';
+
+// ─── SUPABASE INIT ────────────────────────────────────────────────────────────
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let userProfile = { handicap: '15-24', goal: 'draw' };
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+async function initAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    await onSignedIn(session.user);
+  }
+
+  db.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      await onSignedIn(session.user);
+    } else if (event === 'SIGNED_OUT') {
+      onSignedOut();
+    }
+  });
+}
+
+async function onSignedIn(user) {
+  currentUser = user;
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'block';
+
+  const emailDisplay = document.getElementById('user-email-display');
+  if (emailDisplay) {
+    emailDisplay.textContent = user.email;
+    emailDisplay.style.display = 'block';
+  }
+
+  await loadProfile();
+  await loadHistory();
+  renderRoadmap(userProfile.handicap || '15-24');
+}
+
+function onSignedOut() {
+  currentUser = null;
+  document.getElementById('app-shell').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'signup'));
+  });
+  document.getElementById('login-form').style.display = tab === 'login' ? 'flex' : 'none';
+  document.getElementById('signup-form').style.display = tab === 'signup' ? 'flex' : 'none';
+  clearAuthMessages();
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('auth-success').style.display = 'none';
+}
+function showAuthSuccess(msg) {
+  const el = document.getElementById('auth-success');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('auth-error').style.display = 'none';
+}
+function clearAuthMessages() {
+  document.getElementById('auth-error').style.display = 'none';
+  document.getElementById('auth-success').style.display = 'none';
+}
+
+async function signIn() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!email || !password) return showAuthError('Please enter your email and password.');
+
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+
+  const { error } = await db.auth.signInWithPassword({ email, password });
+  if (error) showAuthError(error.message);
+
+  btn.disabled = false; btn.textContent = 'Sign In';
+}
+
+async function signUp() {
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  if (!email || !password) return showAuthError('Please fill in all fields.');
+  if (password.length < 6) return showAuthError('Password must be at least 6 characters.');
+
+  const btn = document.getElementById('signup-btn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
+
+  const { error } = await db.auth.signUp({ email, password });
+  if (error) showAuthError(error.message);
+  else showAuthSuccess('Account created! Check your email to confirm, then sign in.');
+
+  btn.disabled = false; btn.textContent = 'Create Account';
+}
+
+async function signOut() {
+  await db.auth.signOut();
+}
+
+async function resetPassword() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) return showAuthError('Enter your email address above first.');
+  const { error } = await db.auth.resetPasswordForEmail(email);
+  if (error) showAuthError(error.message);
+  else showAuthSuccess('Password reset email sent! Check your inbox.');
+}
+
+// ─── PROFILE ──────────────────────────────────────────────────────────────────
+async function loadProfile() {
+  if (!currentUser) return;
+
+  const { data } = await db
+    .from('profiles')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .single();
+
+  if (data) {
+    userProfile = { handicap: data.handicap || '15-24', goal: data.goal || 'draw' };
+  }
+
+  document.getElementById('profile-handicap').value = userProfile.handicap || '';
+  document.getElementById('profile-goal').value = userProfile.goal || '';
+  document.getElementById('stat-handicap').textContent = userProfile.handicap || '—';
+}
+
+async function saveProfile() {
+  if (!currentUser) return;
+  const handicap = document.getElementById('profile-handicap').value;
+  const goal = document.getElementById('profile-goal').value;
+  userProfile = { handicap, goal };
+
+  await db.from('profiles').upsert({
+    user_id: currentUser.id,
+    handicap,
+    goal,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'user_id' });
+
+  document.getElementById('stat-handicap').textContent = handicap || '—';
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  const names = ['dashboard', 'upload', 'analyzer', 'roadmap', 'history'];
+  document.querySelectorAll('nav button')[names.indexOf(name)]?.classList.add('active');
+  if (name === 'roadmap') renderRoadmap(userProfile.handicap || '15-24');
+  if (name === 'history') loadHistory();
+}
+
+// ─── CLAUDE API (via Vercel function — key is safe on server) ─────────────────
+async function askClaude(prompt, systemPrompt) {
+  const res = await fetch('/api/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, systemPrompt })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data.result;
+}
+
+function streamToElement(el, text) {
+  el.innerHTML = '';
+  const words = text.split(' ');
+  let i = 0;
+  function next() {
+    if (i < words.length) {
+      el.innerHTML = (el.innerHTML + (i > 0 ? ' ' : '') + words[i++])
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      setTimeout(next, 12);
+    }
+  }
+  next();
+}
+
+// ─── FILE UPLOAD ──────────────────────────────────────────────────────────────
+let parsedData = [];
+let parsedFilename = '';
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-zone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  parsedFilename = file.name;
+  const reader = new FileReader();
+  reader.onload = (e) => parseCSV(e.target.result, file.name);
+  reader.readAsText(file);
+}
+
+function parseCSV(text, filename) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) {
+    document.getElementById('parse-status').innerHTML = '<span style="color:var(--danger)">⚠️ File appears empty or invalid.</span>';
+    return;
+  }
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+  parsedData = [];
+  for (let i = 1; i < lines.length; i++) {
+    const vals = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+    if (vals.length < 2) continue;
+    const row = {};
+    headers.forEach((h, idx) => { row[h] = vals[idx] || ''; });
+    parsedData.push(row);
+  }
+  document.getElementById('parse-status').innerHTML =
+    `<span style="color:var(--green)">✅ Parsed <strong>${parsedData.length} shots</strong> from ${filename}</span>`;
+  renderTable(parsedData, Object.keys(parsedData[0]).slice(0, 12));
+  document.getElementById('data-preview').style.display = 'block';
+}
+
+function renderTable(data, headers) {
+  let html = '<table><thead><tr>';
+  headers.forEach(h => { html += `<th>${h}</th>`; });
+  html += '</tr></thead><tbody>';
+  data.slice(0, 20).forEach(row => {
+    html += '<tr>';
+    headers.forEach(h => { html += `<td>${row[h] || '—'}</td>`; });
+    html += '</tr>';
+  });
+  if (data.length > 20) html += `<tr><td colspan="${headers.length}" style="color:var(--muted); text-align:center; padding:0.75rem;">... and ${data.length - 20} more shots</td></tr>`;
+  html += '</tbody></table>';
+  document.getElementById('table-container').innerHTML = html;
+}
+
+function loadDemoData() {
+  const demoCSV = `Shot,Club,Club Speed,Ball Speed,Launch Angle,Spin Rate,Carry Distance,Club Path,Face Angle,Attack Angle,Spin Axis,Smash Factor
+1,7 Iron,82,118,-4.5,7200,155,-3.2,+1.8,-4.2,+9,1.44
+2,7 Iron,80,115,-4.8,7450,148,-4.1,+2.1,-4.5,+11,1.44
+3,7 Iron,83,120,-4.0,6900,160,-2.8,+1.4,-4.0,+7,1.45
+4,7 Iron,79,113,-5.2,7800,143,-5.0,+2.8,-4.8,+14,1.43
+5,7 Iron,82,117,-4.6,7300,153,-3.5,+1.9,-4.3,+10,1.43
+6,7 Iron,81,116,-4.7,7100,152,-2.9,+1.2,-4.1,+8,1.43
+7,7 Iron,84,121,-3.8,6800,162,-3.0,+1.5,-3.9,+8,1.44
+8,7 Iron,80,115,-4.9,7600,146,-4.5,+2.5,-4.6,+12,1.44
+9,7 Iron,82,118,-4.4,7250,155,-3.3,+1.7,-4.2,+9,1.44
+10,7 Iron,83,119,-4.2,7050,158,-3.1,+1.6,-4.0,+8,1.43`;
+  parseCSV(demoCSV, 'Demo_7Iron_Session.csv');
+  document.getElementById('a-path').value = '-3.5';
+  document.getElementById('a-face').value = '1.8';
+  document.getElementById('a-attack').value = '-4.3';
+  document.getElementById('a-spin').value = '7200';
+  document.getElementById('a-spinaxis').value = '9';
+  document.getElementById('a-ballspeed').value = '118';
+  document.getElementById('a-clubspeed').value = '82';
+  updateShotViz();
+}
+
+async function analyzeUploadedData() {
+  if (!parsedData.length) return;
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true; btn.textContent = '⏳ Analyzing...';
+
+  const responseEl = document.getElementById('upload-analysis');
+  responseEl.className = 'ai-response visible';
+  responseEl.innerHTML = '<div class="ai-label">CADDIE IQ ANALYZING</div><div class="loading"><div class="spinner"></div>Reading your Trackman data...</div>';
+
+  const sample = parsedData.slice(0, 10).map(r => JSON.stringify(r)).join('\n');
+  const handicap = userProfile.handicap || '15-24';
+  const goal = userProfile.goal || 'draw';
+
+  const prompt = `Analyze this Trackman golf session data for a ${handicap} handicap golfer whose goal is to hit a ${goal}:
+
+${sample}
+
+Total shots: ${parsedData.length}
+
+Please provide:
+1. **Shot Pattern Summary** — What is the dominant ball flight and why?
+2. **The D-Plane Explained** — Simply explain what their data says about why the ball curves.
+3. **Top 3 Fixes** — Specific, actionable changes to achieve their desired ${goal}.
+4. **Consistency Check** — Any concerning variance in the data?
+5. **One Drill** — The single best drill for a ${handicap} handicap golfer right now.
+
+Keep advice appropriate for a ${handicap} handicap golfer.`;
+
+  try {
+    const result = await askClaude(prompt);
+    responseEl.innerHTML = '<div class="ai-label">ANALYSIS COMPLETE</div><div class="ai-body"></div>';
+    streamToElement(responseEl.querySelector('.ai-body'), result);
+
+    await saveAnalysis('CSV Session Analysis', result, `${parsedData.length} shots · ${parsedFilename}`, 'upload', parsedData.slice(0, 50));
+    await loadHistory();
+  } catch(e) {
+    responseEl.innerHTML = `<div style="color:#ff8080">⚠️ ${e.message || 'Error connecting. Check your setup.'}</div>`;
+  }
+
+  btn.disabled = false; btn.textContent = '🤖 Analyze with AI Caddie';
+}
+
+// ─── SHOT ANALYZER ────────────────────────────────────────────────────────────
+function updateShotViz() {
+  const path = parseFloat(document.getElementById('a-path').value) || 0;
+  const face = parseFloat(document.getElementById('a-face').value) || 0;
+  const curvature = (face - path) * 6;
+  const startDir = (face * 0.75 + path * 0.25) * 5;
+  const endX = 110 + startDir + curvature;
+  const controlX = 110 + startDir + curvature * 0.3;
+  const svgPath = document.getElementById('shot-svg-path');
+  svgPath.setAttribute('d', `M110,110 Q${controlX},60 ${endX},15`);
+  if (curvature > 5) svgPath.setAttribute('stroke', '#e63946');
+  else if (curvature < -5) svgPath.setAttribute('stroke', '#52b788');
+  else svgPath.setAttribute('stroke', '#ffd166');
+}
+
+['a-path', 'a-face'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', updateShotViz);
+});
+
+async function runShotAnalysis() {
+  const btn = document.getElementById('shot-btn');
+  const club = document.getElementById('a-club').value;
+  const shape = document.getElementById('a-shape').value;
+  const path = document.getElementById('a-path').value;
+  const face = document.getElementById('a-face').value;
+  const attack = document.getElementById('a-attack').value;
+  const spin = document.getElementById('a-spin').value;
+  const spinAxis = document.getElementById('a-spinaxis').value;
+  const ballspeed = document.getElementById('a-ballspeed').value;
+  const clubspeed = document.getElementById('a-clubspeed').value;
+  const handicap = userProfile.handicap || '15-24';
+
+  const responseEl = document.getElementById('shot-analysis');
+  responseEl.className = 'ai-response visible';
+  responseEl.innerHTML = '<div class="ai-label">CADDIE IQ DIAGNOSING</div><div class="loading"><div class="spinner"></div>Analyzing your ball flight...</div>';
+  btn.disabled = true;
+
+  const smash = ballspeed && clubspeed ? (parseFloat(ballspeed)/parseFloat(clubspeed)).toFixed(2) : 'N/A';
+
+  const prompt = `Diagnose this ${club} shot for a ${handicap} handicap golfer who wants to hit a ${shape}:
+
+Club Path: ${path || 'not provided'}°
+Face Angle: ${face || 'not provided'}°
+Attack Angle: ${attack || 'not provided'}°
+Spin Rate: ${spin || 'not provided'} rpm
+Spin Axis: ${spinAxis || 'not provided'}°
+Ball Speed: ${ballspeed || 'not provided'} mph
+Club Speed: ${clubspeed || 'not provided'} mph
+Smash Factor: ${smash}
+
+Please explain:
+1. **What Your Ball Is Doing** — Describe the actual shot shape this data produces and why.
+2. **Why You're Not Hitting a ${shape}** — Specific numbers causing the issue.
+3. **Exact Changes Needed** — What numbers need to change and by how much?
+4. **Feel Cues** — 2 feel-based tips a golfer can use on the range.
+5. **Contact Quality** — Is their smash factor of ${smash} good for a ${club}?
+
+Be direct and specific.`;
+
+  try {
+    const result = await askClaude(prompt);
+    responseEl.innerHTML = '<div class="ai-label">DIAGNOSIS COMPLETE</div><div class="ai-body"></div>';
+    streamToElement(responseEl.querySelector('.ai-body'), result);
+    updateShotViz();
+
+    await saveAnalysis(`${club} Shot Analysis`, result, `Goal: ${shape} · HC: ${handicap}`, 'shot_analyzer');
+    await loadHistory();
+  } catch(e) {
+    responseEl.innerHTML = `<div style="color:#ff8080">⚠️ ${e.message || 'Error. Check setup.'}</div>`;
+  }
+
+  btn.disabled = false;
+}
+
+// ─── ROADMAP ──────────────────────────────────────────────────────────────────
+const ROADMAP_DATA = {
+  '25+': {
+    title: 'Beginner Focus Areas',
+    desc: 'At this stage, fundamentals create the biggest improvement. Focus on these first:',
+    metrics: [
+      { priority: 'PRIORITY #1', name: 'Smash Factor', label: 'Contact Quality', desc: 'Getting the ball off center face matters more than anything. Target 1.40+ for irons.' },
+      { priority: 'PRIORITY #2', name: 'Face Angle', label: 'Starting Direction', desc: 'Face angle determines ~75% of where the ball starts. Square it up before worrying about path.' },
+      { priority: 'PRIORITY #3', name: 'Launch Angle', label: 'Getting Airborne', desc: 'Too low = topped shots, too high = fat shots. Ideal 7 iron: 16–20°.' }
+    ]
+  },
+  '15-24': {
+    title: 'Mid Handicap Focus Areas',
+    desc: "You're making decent contact — now shape the ball and build consistency:",
+    metrics: [
+      { priority: 'PRIORITY #1', name: 'Club Path vs Face Angle', label: 'D-Plane Gap', desc: 'Face-to-path gap creates curve. For a draw: close face relative to path (face left of path for right-handers).' },
+      { priority: 'PRIORITY #2', name: 'Club Path', label: 'Swing Direction', desc: 'Out-to-in path causes pulls and fades. Work toward neutral (0°) or slightly positive (+2 to +4°).' },
+      { priority: 'PRIORITY #3', name: 'Spin Rate Variance', label: 'Strike Consistency', desc: 'Variance of ±1000+ rpm signals inconsistent strike location. Consistent spin = consistent distance.' },
+      { priority: 'BONUS', name: 'Attack Angle', label: 'Ball-First Contact', desc: 'Steeper attack (-5° to -6°) for irons = better compression. Too shallow leads to thin shots.' }
+    ]
+  },
+  '5-14': {
+    title: 'Low-Mid Handicap Focus Areas',
+    desc: 'You have the basics — now precision and shot shaping define your scoring:',
+    metrics: [
+      { priority: 'PRIORITY #1', name: 'Face-to-Path Relationship', label: 'Shot Shape Control', desc: 'Hit both draw and fade on demand. A gap of 2–5° creates a gentle curve. Over 8° is a big miss.' },
+      { priority: 'PRIORITY #2', name: 'Dynamic Loft', label: 'Compression', desc: 'Forward shaft lean increases compression and distance. Target 3–5° forward lean for irons.' },
+      { priority: 'PRIORITY #3', name: 'Spin Axis Variance', label: 'Dispersion Control', desc: 'Keep spin axis within ±5° for controlled dispersion that holds greens.' }
+    ]
+  },
+  '0-4': {
+    title: 'Scratch-Level Focus Areas',
+    desc: "At this level you're optimizing. Small gains in each metric compound into birdies:",
+    metrics: [
+      { priority: 'PRIORITY #1', name: 'Face Closure Rate', label: 'Dynamic Face Control', desc: 'How fast the face closes through impact. Controlling this is the difference between a draw and a hook under pressure.' },
+      { priority: 'PRIORITY #2', name: 'Low Point Control', label: 'Turf Interaction', desc: 'Where the club bottoms out relative to the ball. 1 inch forward = +10 yards with irons.' },
+      { priority: 'PRIORITY #3', name: 'Vertical Gear Effect', label: 'Spin Optimization', desc: 'Hitting above center on driver reduces spin ~400rpm = more distance.' }
+    ]
+  }
+};
+
+function selectHandicap(el, val) {
+  document.querySelectorAll('.hc-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  renderRoadmap(val);
+}
+
+function renderRoadmap(hc) {
+  const data = ROADMAP_DATA[hc] || ROADMAP_DATA['15-24'];
+  let html = `<div class="card"><div class="card-title">📍 ${data.title}</div><p style="font-size:0.88rem; color:var(--mid); margin-bottom:1.5rem;">${data.desc}</p><div class="metrics-grid">`;
+  data.metrics.forEach(m => {
+    html += `<div class="metric-pill"><div class="mp-label">${m.label}</div><div class="mp-name">${m.name}</div><div class="mp-desc">${m.desc}</div><div class="mp-priority">${m.priority}</div></div>`;
+  });
+  html += '</div></div>';
+  document.getElementById('roadmap-content').innerHTML = html;
+}
+
+async function getRoadmapAdvice() {
+  const q = document.getElementById('roadmap-question').value.trim();
+  if (!q) return;
+
+  const handicap = userProfile.handicap || '15-24';
+  const responseEl = document.getElementById('roadmap-advice');
+  responseEl.className = 'ai-response visible';
+  responseEl.innerHTML = '<div class="ai-label">CADDIE IQ RESPONDING</div><div class="loading"><div class="spinner"></div>Thinking...</div>';
+
+  const prompt = `You are an expert golf coach. A ${handicap} handicap golfer asks: "${q}"
+
+Give practical, specific advice for their skill level. Reference Trackman metrics where relevant.
+Include: 1. Root cause diagnosis. 2. 2–3 specific drills or swing changes. 3. Target Trackman numbers.
+Keep it conversational and encouraging.`;
+
+  try {
+    const result = await askClaude(prompt);
+    responseEl.innerHTML = '<div class="ai-label">CADDIE IQ ADVICE</div><div class="ai-body"></div>';
+    streamToElement(responseEl.querySelector('.ai-body'), result);
+
+    await saveAnalysis('Improvement Question', result, q.substring(0, 80), 'roadmap');
+    await loadHistory();
+  } catch(e) {
+    responseEl.innerHTML = `<div style="color:#ff8080">⚠️ ${e.message}</div>`;
+  }
+}
+
+// ─── DATABASE ─────────────────────────────────────────────────────────────────
+async function saveAnalysis(title, content, subtitle, sessionType, rawData) {
+  if (!currentUser) return;
+
+  await db.from('analyses').insert({
+    user_id: currentUser.id,
+    title,
+    subtitle: subtitle || '',
+    content,
+    session_type: sessionType || 'manual',
+    raw_data: rawData || null,
+    handicap_at_time: userProfile.handicap
+  });
+}
+
+async function loadHistory() {
+  if (!currentUser) return;
+
+  const { data, error } = await db
+    .from('analyses')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error) { console.error(error); return; }
+
+  const sessions = data || [];
+
+  // Update stats
+  document.getElementById('stat-sessions').textContent = sessions.filter(s => s.session_type === 'upload').length;
+  document.getElementById('stat-analyses').textContent = sessions.length;
+
+  renderHistory(sessions);
+  renderRecentAnalyses(sessions);
+}
+
+function renderHistory(sessions) {
+  const container = document.getElementById('history-list');
+  if (!sessions || !sessions.length) {
+    container.innerHTML = '<div class="empty-state"><div class="es-icon">📂</div><p>No history yet. Start by uploading data or running a shot analysis.</p></div>';
+    return;
+  }
+  let html = '';
+  sessions.forEach(s => {
+    const date = new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const time = new Date(s.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const preview = s.content.replace(/\*\*/g, '').substring(0, 120) + '...';
+    html += `
+      <div class="history-item" onclick="viewAnalysis(${JSON.stringify(s).replace(/"/g, '&quot;')})">
+        <div class="hi-date">${date} · ${time} · ${s.handicap_at_time || '—'} HCP</div>
+        <div class="hi-title">${s.title}</div>
+        <div style="font-size:0.78rem; color:var(--green); margin-bottom:0.3rem;">${s.subtitle || ''}</div>
+        <div class="hi-preview">${preview}</div>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderRecentAnalyses(sessions) {
+  const container = document.getElementById('recent-analyses-wrap');
+  if (!sessions || !sessions.length) {
+    container.innerHTML = `
+      <div class="card-title" style="font-family:'Bebas Neue'; font-size:1.1rem; letter-spacing:1px; color:var(--green); margin-bottom:1rem;">📋 Recent Analyses</div>
+      <div class="empty-state"><div class="es-icon">🏌️</div><p>No analyses yet.</p><br>
+      <button class="btn btn-primary" onclick="showPanel('upload')">Upload Data →</button></div>`;
+    return;
+  }
+  let html = '<div class="card-title" style="font-family:\'Bebas Neue\'; font-size:1.1rem; letter-spacing:1px; color:var(--green); margin-bottom:1rem;">📋 Recent Analyses</div>';
+  sessions.slice(0, 3).forEach(s => {
+    const date = new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    html += `
+      <div class="history-item" onclick="viewAnalysis(${JSON.stringify(s).replace(/"/g, '&quot;')})">
+        <div class="hi-date">${date}</div>
+        <div class="hi-title">${s.title}</div>
+        <div class="hi-preview">${s.content.replace(/\*\*/g, '').substring(0, 80)}...</div>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function viewAnalysis(s) {
+  if (typeof s === 'string') {
+    try { s = JSON.parse(s.replace(/&quot;/g, '"')); } catch(e) { return; }
+  }
+  const date = new Date(s.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const popup = document.createElement('div');
+  popup.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; display:flex; align-items:center; justify-content:center; padding:1rem;';
+  popup.innerHTML = `
+    <div style="background:var(--fairway); border-radius:16px; padding:2rem; max-width:700px; width:100%; max-height:80vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+        <div>
+          <div style="font-family:'Bebas Neue'; font-size:1.4rem; color:var(--gold-light); letter-spacing:1px;">${s.title}</div>
+          <div style="font-size:0.78rem; color:var(--green-light); font-family:'DM Mono';">${date}</div>
+        </div>
+        <button onclick="this.closest('[style]').remove()" style="background:rgba(255,255,255,0.1); border:none; color:white; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1rem;">✕</button>
+      </div>
+      <div style="font-size:0.9rem; line-height:1.75; color:rgba(255,255,255,0.88); white-space:pre-wrap;">
+        ${s.content.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--gold-light)">$1</strong>')}
+      </div>
+    </div>`;
+  document.body.appendChild(popup);
+  popup.addEventListener('click', (e) => { if (e.target === popup) popup.remove(); });
+}
+
+async function exportHistory() {
+  if (!currentUser) return;
+  const { data } = await db.from('analyses').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `caddieiq-history-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+}
+
+async function clearHistory() {
+  if (!currentUser || !confirm('Delete all your history? This cannot be undone.')) return;
+  await db.from('analyses').delete().eq('user_id', currentUser.id);
+  await loadHistory();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+initAuth();
+renderRoadmap('15-24');
+</script>
+</body>
+</html>
