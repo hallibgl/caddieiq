@@ -933,6 +933,80 @@
   }
   .grip-card.highlighted .grip-recommended { display: block; }
 
+
+  /* ── MOBILE NAV ─────────────────────────── */
+  @media (max-width: 640px) {
+    header {
+      padding: 0 1rem;
+      height: 52px;
+    }
+
+    /* Hide desktop nav on mobile */
+    header nav { display: none; }
+    .header-user .signout-btn { display: none; }
+
+    /* Compact logo */
+    .logo { font-size: 1.4rem; }
+
+    /* Show sign out as avatar long-press or just keep avatar */
+    .user-avatar { cursor: pointer; }
+
+    /* Bottom tab bar */
+    .mobile-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--fairway);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      z-index: 200;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .mobile-nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0.25rem;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      gap: 0.2rem;
+    }
+
+    .mobile-nav-btn.active {
+      color: var(--gold-light);
+    }
+
+    .mobile-nav-icon {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    /* Add padding so content doesn't hide behind bottom nav */
+    main {
+      padding-bottom: calc(70px + env(safe-area-inset-bottom));
+    }
+
+    /* Tighten up cards on mobile */
+    .card { padding: 1rem; }
+    .gauge-grid { grid-template-columns: 1fr 1fr; }
+    .drill-cards-grid { grid-template-columns: 1fr; }
+    .path-meaning-row { flex-direction: column; }
+    .path-meaning-arrow { transform: rotate(90deg); }
+  }
+
+  /* Hide mobile nav on desktop/tablet */
+  @media (min-width: 641px) {
+    .mobile-nav { display: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -1025,6 +1099,34 @@
       <button class="signout-btn" onclick="signOut()">Sign Out</button>
     </div>
   </header>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="mobile-nav">
+    <button class="mobile-nav-btn active" onclick="showPanel('dashboard'); setMobileActive(this)">
+      <span class="mobile-nav-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="showPanel('upload'); setMobileActive(this)">
+      <span class="mobile-nav-icon">📤</span>
+      <span>Upload</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="showPanel('analyzer'); setMobileActive(this)">
+      <span class="mobile-nav-icon">🎯</span>
+      <span>Analyzer</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="showPanel('roadmap'); setMobileActive(this)">
+      <span class="mobile-nav-icon">📈</span>
+      <span>Improve</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="showPanel('history'); setMobileActive(this)">
+      <span class="mobile-nav-icon">📋</span>
+      <span>History</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="showPanel('profile'); setMobileActive(this)">
+      <span class="mobile-nav-icon">👤</span>
+      <span>Profile</span>
+    </button>
+  </nav>
 
   <main>
 
@@ -1783,10 +1885,15 @@ async function saveEditedProfile() {
 // ─── NAVIGATION ───────────────────────────────────────────────────────────────
 function showPanel(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('header nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
   const names = ['dashboard', 'upload', 'analyzer', 'roadmap', 'history', 'profile'];
-  document.querySelectorAll('nav button')[names.indexOf(name)]?.classList.add('active');
+  document.querySelectorAll('header nav button')[names.indexOf(name)]?.classList.add('active');
+  // Sync mobile bottom nav
+  document.querySelectorAll('.mobile-nav-btn').forEach((b, i) => {
+    b.classList.toggle('active', names[i] === name);
+  });
+  window.scrollTo(0, 0);
   if (name === 'roadmap') renderRoadmap(userProfile.handicap || '15-24');
   if (name === 'history') loadHistory();
   if (name === 'profile') { renderProfileCard(); initAvatarGrid('edit-avatar-grid', userProfile.avatar_color); }
@@ -1913,6 +2020,9 @@ async function analyzeUploadedData() {
   buildVisualDashboard(parsedData, handicap, goal);
   buildProgressSnapshot();
 
+  // Re-enable button immediately — don't lock user out while AI loads
+  btn.disabled = false; btn.textContent = '🤖 Analyze Again';
+
   const responseEl = document.getElementById('upload-analysis');
   responseEl.className = 'ai-response visible';
   responseEl.innerHTML = '<div class="ai-label">CADDIE IQ ANALYZING</div><div class="loading"><div class="spinner"></div>Building your AI analysis...</div>';
@@ -1980,8 +2090,8 @@ ${notes ? '6. **Session Notes Response** — Respond to the golfer\'s own notes 
     responseEl.innerHTML = `<div style="color:#ff8080">⚠️ ${e.message || 'Error connecting. Check your setup.'}</div>`;
   }
 
-  btn.disabled = false; btn.textContent = '🤖 Analyze Again';
 }
+
 
 // ─── SHOT ANALYZER ────────────────────────────────────────────────────────────
 function updateShotViz() {
